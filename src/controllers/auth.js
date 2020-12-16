@@ -42,7 +42,9 @@ exports.register = async (req, res) => {
     const privateKey = process.env.JWT_PRIVATE_KEY;
     const token = jwt.sign(
       {
-        userId: newUser.id,
+        id: user.id,
+        fullname: user.fullname,
+        posts: user.posts,
       },
       privateKey
     );
@@ -128,7 +130,7 @@ exports.login = async (req, res) => {
     const privateKey = process.env.JWT_PRIVATE_KEY;
     const token = jwt.sign(
       {
-        userId: user.id,
+        id: user.id,
         fullname: user.fullname,
         posts: user.posts,
       },

@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       //? Relationship
 
-      // Post.hasOne(models.User, {
-      //   as: 'user',
-      // });
-
+      Post.belongsTo(models.User, {
+        as: 'user',
+      });
       Post.hasMany(models.Photos, {
         as: 'photos',
+        foreignKey: 'postId',
       });
     }
   }

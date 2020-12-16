@@ -1,4 +1,4 @@
-const { Photos, Post } = require('../../models');
+const { Photos, Post, User } = require('../../models');
 
 exports.addPhoto = async (req, res) => {
   try {
@@ -6,12 +6,27 @@ exports.addPhoto = async (req, res) => {
     const { file } = req;
     const fileImage = file.filename;
 
-    console.log(posts);
+    //? User will uploaded
+    const user = await User.findOne({
+      where: {
+        id: userId,
+        posts,
+      },
+      include: {
+        model: Post,
+        as: 'posts',
+        attributes: [id],
+      },
+    });
+
+    const postId = user.posts[0];
+
+    console.log(postId);
 
     const newPhoto = await Photos.create({
       image: fileImage,
-      postId: posts.map((post) => post.id),
       userId,
+      postId: post.id,
     });
 
     const photo = await Photos.findOne({

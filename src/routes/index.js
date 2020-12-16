@@ -3,7 +3,7 @@ const router = express.Router();
 
 //? Require middleware
 const { auth: Private } = require('../middleware/authentication');
-const { UploadFile } = require('../middleware/upload');
+const { uploadFile } = require('../middleware/upload');
 
 //* Require Controller
 //? Auth
@@ -19,7 +19,13 @@ const {
 } = require('../controllers/user');
 
 //? Post
-const { addPost, getAllPost } = require('../controllers/post');
+const {
+  addPost,
+  getAllPost,
+  updatePost,
+  deletePost,
+  getPostById,
+} = require('../controllers/post');
 
 //? Photo
 const { addPhoto } = require('../controllers/photo');
@@ -36,15 +42,18 @@ router.post('/register', register);
 //? User
 router.get('/users', getAllUsers);
 router.get('/user/:id', getUserById);
-router.patch('/user/:id', UploadFile('avatar'), updateUser);
+router.patch('/user/:id', uploadFile('avatar', null), updateUser);
 router.delete('/user/:id', deleteUser);
 
 //? Post
-router.post('/post', Private, addPost);
 router.get('/posts', Private, getAllPost);
+router.get('/post/:id', Private, getPostById);
+router.post('/post', Private, uploadFile('photos', null), addPost);
+router.patch('/post/:id', Private, uploadFile('photos', null), updatePost);
+router.delete('/post/:id', Private, deletePost);
 
 //? Photo
-router.post('/photo', Private, UploadFile('image'), addPhoto);
+// router.post('/photo', Private, uploadFile('image', null), addPhoto);
 
 //? Art
 router.post('/art', Private, addArt);

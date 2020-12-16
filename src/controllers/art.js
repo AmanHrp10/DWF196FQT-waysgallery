@@ -3,14 +3,17 @@ const Joi = require('joi');
 
 exports.addArt = async (req, res) => {
   try {
-    const { id: userId } = req.userId;
+    const { userId } = req.user;
     const { body } = req;
+
+    console.log(userId);
 
     //? Validation
     const schema = Joi.object({
       title: Joi.string().required(),
       description: Joi.string().required(),
       price: Joi.number().integer().required(),
+      orderTo: Joi.number(),
     });
 
     const { error } = schema.validate(body, {
@@ -26,19 +29,11 @@ exports.addArt = async (req, res) => {
       });
     }
 
-    const user = User.findOne({
-      where: {
-        id: body.orderTo,
-      },
-    });
-
-    console.log(user);
-
     const newArt = await Art.create({
       ...body,
       started: new Date(),
       finished: new Date(),
-      orderBy: 6,
+      orderBy: userId,
     });
 
     const newArtAdd = await Art.findOne({

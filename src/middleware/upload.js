@@ -1,6 +1,6 @@
 const multer = require('multer');
 
-exports.UploadFile = (file) => {
+exports.uploadFile = (file1, file2) => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       return cb(null, 'uploads/');
@@ -9,9 +9,8 @@ exports.UploadFile = (file) => {
       return cb(null, Date.now() + '-' + file.originalname);
     },
   });
-
   //? handle channel table upload file
-  filterPhoto = (req, file, cb) => {
+  fileFilter = (req, file, cb) => {
     if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
       req.fileValidationError = {
         message: 'Only image files are allowed!',
@@ -21,13 +20,22 @@ exports.UploadFile = (file) => {
     cb(null, true);
   };
 
-  const maxSize = 10 * 1000 * 1000;
+  const maxSize = 5 * 1000 * 1000;
 
   const upload = multer({
     storage,
-    fileFilter: filterPhoto,
+    fileFilter,
     limits: { fileSize: maxSize },
-  }).single(file);
+  }).fields([
+    {
+      name: file1,
+      maxCount: 5,
+    },
+    {
+      name: file2,
+      maxCount: 1,
+    },
+  ]);
 
   //? Middleware
   return (req, res, next) => {
@@ -37,7 +45,7 @@ exports.UploadFile = (file) => {
         return res.status(400).send(req.fileValidationError);
 
       //! Error file not selected
-      if (!req.file && !err)
+      if (!req.files && !err)
         return res.status(400).send({
           message: 'Please select files to upload',
         });
@@ -46,7 +54,7 @@ exports.UploadFile = (file) => {
       if (err) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).send({
-            message: 'Max file sized 10MB',
+            message: 'Max file sized 5MB',
           });
         }
         return res.status(400).send(err);
