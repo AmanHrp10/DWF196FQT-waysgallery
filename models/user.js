@@ -12,8 +12,13 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Post, {
         as: 'posts',
       });
-      User.hasMany(models.Art, {
-        as: 'arts',
+      User.hasMany(models.Hire, {
+        as: 'orders',
+        foreignKey: 'orderTo',
+      });
+      User.hasMany(models.Hire, {
+        as: 'orderBy',
+        foreignKey: 'orderBy',
       });
     }
   }

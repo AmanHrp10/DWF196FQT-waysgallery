@@ -31,7 +31,14 @@ const {
 const { addPhoto } = require('../controllers/photo');
 
 //? Art
-const { addArt } = require('../controllers/art');
+// const { addArt } = require('../controllers/art');
+
+//? Hire
+const {
+  createHire,
+  approvedHire,
+  rejectedHire,
+} = require('../controllers/hire');
 
 //* set endpoint
 
@@ -56,6 +63,11 @@ router.delete('/post/:id', Private, deletePost);
 // router.post('/photo', Private, uploadFile('image', null), addPhoto);
 
 //? Art
-router.post('/art', Private, addArt);
+// router.post('/art', Private, addArt);
+
+//? Hire
+router.put('/hire/:id', Private, approvedHire);
+router.delete('/hire/:id', Private, rejectedHire);
+router.post('/hire', Private, createHire);
 
 module.exports = router;
