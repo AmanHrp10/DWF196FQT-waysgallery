@@ -1,0 +1,24 @@
+.wrapper-upload-post{
+    padding: 0 90px;
+}
+.upload-post{
+    height: 300px;
+    width: 85%;
+    border-style:dashed ;
+    border-color: #b2b2b2;
+}
+.upload-post-child{
+    width: 85%;
+}
+
+.button-post{
+    background: #2FC4B2;
+}
+.button-cancel {
+    background: #e7e7e7;
+}
+
+.image-post{
+    height: 90px;
+    border: dashed #b2b2b2;
+}

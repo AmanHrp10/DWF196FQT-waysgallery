@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Andika+New+Basic&display=swap');
+
+
+
+* {
+  font-family: 'Andika New Basic',
+  sans-serif;
+  ;
+}
+
+
+
+/** Button */
+.button-post {
+  background: #2FC4B2;
+}
+
+.button-cancel {
+  background: #e7e7e7;
+}
+
+.btn:focus{
+  border: none;
+  box-shadow: none;
+}
+button:focus {
+  border: none;
+}
+.form-control:focus{
+  transition: none;
+  box-shadow: none;
+}
+
+
+
+
+/** From Input */
+textarea.form-control,
+input.form-control{
+  background: #e7e7e7;
+}
+
+
+
+
+/** Dropdown */
+.dropdown-toggle:After,
+.dropdown:After{
+  display: none;
+}
+.show:focus,
+.dropdown-toggle,
+.dropdown-toggle:hover,
+.dropdown-toggle:focus {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.show>.btn-primary.dropdown-toggle,
+.show>.btn-primary.dropdown-toggle:focus{
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+ .dropdown button{
+   background: none;
+ }
+
+ 
