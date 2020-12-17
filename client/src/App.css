@@ -11,12 +11,36 @@
 
 
 /** Button */
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus
+{
+  background: none;
+  border: none;
+}
+
+
+
 .button-post {
   background: #2FC4B2;
 }
 
+button:active{
+  box-shadow: none;
+}
 .button-cancel {
   background: #e7e7e7;
+}
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle {
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+.btn-primary.focus.btn-primary:focus{
+border: none;
+box-shadow: none;
 }
 
 .btn:focus{
@@ -31,6 +55,12 @@ button:focus {
   box-shadow: none;
 }
 
+.btn-primary:not(:disabled):not(.disabled).active:focus,
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.show>.btn-primary.dropdown-toggle:focus {
+  border: none;
+  box-shadow: none;
+}
 
 
 
@@ -46,7 +76,7 @@ input.form-control{
 /** Dropdown */
 .dropdown-toggle:After,
 .dropdown:After{
-  display: none;
+  box-shadow:none;
 }
 .show:focus,
 .dropdown-toggle,

@@ -27,8 +27,8 @@ export default function Navbar() {
   return (
     <Fragment>
       <nav
-        className='nav navbar-dark border mb-4'
-        style={{ marginTop: '-10px' }}
+        className='nav border mb-4 fixed-top '
+        style={{ marginTop: '-10px', background: '#fff' }}
       >
         <div className='container'>
           <div className='navbar'>
@@ -48,7 +48,7 @@ export default function Navbar() {
                   <img
                     src={Profile}
                     alt=''
-                    width='100%'
+                    width='70%'
                     style={{ borderRadius: '70%' }}
                   />
                 </Dropdown.Toggle>
