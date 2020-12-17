@@ -1,6 +1,6 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Brand from '../../../images/brand.png';
 import Profile from '../../../images/Profile1.png';
 import Button from '../../atoms/button';
@@ -8,8 +8,19 @@ import { FaRegUser } from 'react-icons/fa';
 import { BsFolderSymlink } from 'react-icons/bs';
 import { GoBook } from 'react-icons/go';
 import './navbar.css';
+import { AppContext } from '../../../context/AppContext';
 
 export default function Navbar() {
+  const [state, dispatch] = useContext(AppContext);
+
+  const router = useHistory();
+  const handleLogout = () => {
+    dispatch({
+      type: 'LOGOUT',
+    });
+    router.push('landing');
+  };
+
   const handleUpload = () => {
     window.alert('Hallo');
   };
@@ -60,12 +71,11 @@ export default function Navbar() {
                     Order
                   </Dropdown.Item>
                   <Dropdown.Divider />
-                  <Dropdown.Item>
-                    {' '}
+                  <Dropdown.Item onClick={handleLogout}>
                     <BsFolderSymlink
                       size='1.3em'
                       style={{ marginRight: '9px', color: 'red' }}
-                    />{' '}
+                    />
                     Logout
                   </Dropdown.Item>
                 </Dropdown.Menu>

@@ -53,8 +53,6 @@ export default function ModalRegister({ onHide, show, isRegister }) {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  console.log(formData);
   return (
     <Fragment>
       <Modal show={show} onHide={onHide}>

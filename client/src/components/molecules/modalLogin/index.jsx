@@ -27,7 +27,6 @@ export default function ModalLogin({ onHide, show, isLogin }) {
           'Content-Type': 'application/json',
         },
       };
-      console.log(body);
       const response = await API.post('/login', body, config);
       console.log(response);
 
@@ -50,7 +49,6 @@ export default function ModalLogin({ onHide, show, isLogin }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  console.log(formData);
   return (
     <Fragment>
       <Modal show={show} onHide={onHide}>
