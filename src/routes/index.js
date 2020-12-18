@@ -9,6 +9,9 @@ const { uploadFile } = require('../middleware/upload');
 //? Auth
 const { register, login } = require('../controllers/auth');
 
+//? Check Auth
+const { checkAuth } = require('../controllers/checkAuth');
+
 //? User
 
 const {
@@ -45,6 +48,9 @@ const {
 //? Auth
 router.post('/login', login);
 router.post('/register', register);
+
+//? Check Auth
+router.get('/check-auth', Private, checkAuth);
 
 //? User
 router.get('/users', getAllUsers);

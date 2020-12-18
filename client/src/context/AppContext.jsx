@@ -4,8 +4,8 @@ export const AppContext = createContext();
 
 const initialState = {
   isLogin: false,
-  user: null,
   isLoading: true,
+  user: null,
 };
 
 const reducer = (state, action) => {
@@ -18,14 +18,25 @@ const reducer = (state, action) => {
         isLoading: false,
         user: {
           id: action.payload.id,
+          email: action.payload.email,
+          name: action.payload.fullname,
+          greeting: action.payload.greeting,
+          posts: action.payload.posts,
         },
       };
 
-    case 'CHANNEL_LOADED':
+    case 'USER_LOADED':
       return {
         ...state,
         isLogin: true,
         isLoading: false,
+        user: {
+          id: action.payload.id,
+          email: action.payload.email,
+          name: action.payload.fullname,
+          greeting: action.payload.greeting,
+          posts: action.payload.posts,
+        },
       };
     case 'AUTH_ERROR':
     case 'LOGOUT':

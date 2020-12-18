@@ -1,13 +1,13 @@
 import { Fragment } from 'react';
 import InputForm from '../../atoms/inputForm/index';
-import Textarea from '../../atoms/textAre';
+import Textarea from '../../atoms/textArea';
 import Button from '../../atoms/button/index';
 import './hired.css';
 
 export default function HirePost() {
   return (
     <Fragment>
-      <div className='container'>
+      <div className='container ' style={{ marginTop: '110px' }}>
         <div className='wrapper-hired-post'>
           <InputForm title='Title' type='text' />
           <Textarea title='Description' className='my-3' rows='7' />

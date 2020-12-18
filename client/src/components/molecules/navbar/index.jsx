@@ -22,7 +22,7 @@ export default function Navbar() {
   };
 
   const handleUpload = () => {
-    window.alert('Hallo');
+    router.push('/upload');
   };
   return (
     <Fragment>
@@ -53,7 +53,7 @@ export default function Navbar() {
                   />
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item>
+                  <Dropdown.Item onClick={() => router.push('/profile')}>
                     <FaRegUser
                       size='1.3em'
                       style={{

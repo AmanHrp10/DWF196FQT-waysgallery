@@ -17,6 +17,7 @@ export default function InputForm({
         placeholder={title}
         name={name}
         value={value}
+        autoComplete='off'
       />
     </Fragment>
   );

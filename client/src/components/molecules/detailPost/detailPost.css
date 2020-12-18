@@ -1,0 +1,15 @@
+.header-post{
+    height: 50px;
+}
+
+
+.image-profile-detail-post{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.desc-post{
+    margin-left: 10px;
+}

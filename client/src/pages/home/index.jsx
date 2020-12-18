@@ -1,13 +1,14 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Dropdown, ButtonGroup, Button } from 'react-bootstrap';
 import InputForm from '../../components/atoms/inputForm/index';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useState } from 'react';
 import TodayPosts from '../../components/molecules/home/index';
 import Order from '../../components/molecules/order';
-import Offer from '../../components/offer';
+import Offer from '../../components/molecules/offer';
 import './home.css';
 import Navbar from '../../components/molecules/navbar';
+import { AppContext } from '../../context/AppContext';
 
 export default function Home() {
   const [dropDown, setDropDown] = useState("Today's");
@@ -56,9 +57,11 @@ export default function Home() {
               </Dropdown.Menu>
             </Dropdown>
           </div>
-          <div className='col-3 text-right'>
-            <InputForm title={`Search`} />
-          </div>
+          {dropDown === "Today's" ? (
+            <div className='col-3 text-right'>
+              <InputForm title={`Search`} />
+            </div>
+          ) : null}
         </div>
         <div className='row mt-4'>
           {dropDown === "Today's" ? (

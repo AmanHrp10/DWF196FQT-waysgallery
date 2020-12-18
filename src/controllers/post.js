@@ -66,13 +66,7 @@ exports.getPostById = async (req, res) => {
           model: User,
           as: 'user',
           attributes: {
-            exclude: [
-              'createdAt',
-              'updatedAt',
-              'password',
-              'avatar',
-              'greeting',
-            ],
+            exclude: ['createdAt', 'updatedAt', 'password', 'avatar', ,],
           },
         },
       ],

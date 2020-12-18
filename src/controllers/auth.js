@@ -42,9 +42,10 @@ exports.register = async (req, res) => {
     const privateKey = process.env.JWT_PRIVATE_KEY;
     const token = jwt.sign(
       {
-        id: user.id,
-        fullname: user.fullname,
-        posts: user.posts,
+        id: newUser.id,
+        email: newUser.email,
+        fullname: newUser.fullname,
+        posts: newUser.posts,
       },
       privateKey
     );
@@ -54,7 +55,9 @@ exports.register = async (req, res) => {
       message: 'Your account was registered',
       data: {
         user: {
+          id: newUser.id,
           email: newUser.email,
+          avatar: newUser.avatar,
           fullname: newUser.fullname,
           token,
         },
@@ -109,9 +112,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(400).send({
         status: 'Request failed',
-        error: {
-          message: 'Invalid login',
-        },
+        message: 'Invalid login',
       });
     }
 
@@ -131,6 +132,8 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
+        email: user.email,
+        avatar: user.avatar,
         fullname: user.fullname,
         posts: user.posts,
       },
