@@ -8,8 +8,9 @@ import { useHistory } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
 
 export default function ModalRegister({ onHide, show, isRegister }) {
-  const [user, setUser] = useState();
+  const [newUser, setNewUser] = useState();
   const [state, dispatch] = useContext(AppContext);
+  const { user } = state;
   const [formData, setFormData] = useState({
     email: '',
     password: '',

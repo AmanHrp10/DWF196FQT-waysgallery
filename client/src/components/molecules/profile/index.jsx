@@ -19,14 +19,22 @@ export default function ProfilePage() {
         <div className='row'>
           <div className='col-6'>
             <div className='image-profile'>
-              <img src={!user ? Profile : user.avatar} alt='' width='100%' />
+              <img
+                src={
+                  !user.avatar
+                    ? Profile
+                    : `http://localhost:8000/uploads/${user.avatar}`
+                }
+                alt=''
+                width='100%'
+              />
             </div>
             <h5>{!user ? 'Random' : user.name}</h5>
-            <h2>{user ? user.greeting : 'Say Hello'}</h2>
+            <h2>{!user.greeting ? 'Say Hello' : user.greeting}</h2>
 
             <Button
               title='Edit Profile'
-              className='button-post text-white btn-sm mt-4'
+              className='button-post text-white btn-sm mt-5'
               onClick={() => router.push('/edit-profile')}
             />
           </div>

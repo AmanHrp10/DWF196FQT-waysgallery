@@ -59,7 +59,7 @@ function App() {
         <Route path='/landing' component={Landing} />
         <PrivateRoute path='/upload' component={UploadPage} />
         <PrivateRoute path='/hire' component={HirePage} />
-        <Route path='/edit-profile' component={EditProfile} />
+        <PrivateRoute path='/edit-profile' component={EditProfile} />
         <PrivateRoute path='/profile' component={Profile} />
         <PrivateRoute path='/detail-post' component={DetailPostPage} />
         <Route path='/detail-user' component={DetailUserPage} />

@@ -11,6 +11,11 @@ import Navbar from '../../components/molecules/navbar';
 import { AppContext } from '../../context/AppContext';
 
 export default function Home() {
+  const [state] = useContext(AppContext);
+
+  const { user } = state;
+
+  console.log(user);
   const [dropDown, setDropDown] = useState("Today's");
   const handleTodays = () => {
     setDropDown("Today's");

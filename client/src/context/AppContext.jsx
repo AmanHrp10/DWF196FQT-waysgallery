@@ -22,9 +22,26 @@ const reducer = (state, action) => {
           name: action.payload.fullname,
           greeting: action.payload.greeting,
           posts: action.payload.posts,
+          arts: action.payload.arts,
+          avatar: action.payload.avatar,
         },
       };
 
+    case 'EDIT_USER':
+      return {
+        ...state,
+        isLogin: true,
+        isLoading: false,
+        user: {
+          id: action.payload.id,
+          email: action.payload.email,
+          name: action.payload.fullname,
+          greeting: action.payload.greeting,
+          posts: action.payload.posts,
+          arts: action.payload.arts,
+          avatar: action.payload.avatar,
+        },
+      };
     case 'USER_LOADED':
       return {
         ...state,
@@ -36,6 +53,8 @@ const reducer = (state, action) => {
           name: action.payload.fullname,
           greeting: action.payload.greeting,
           posts: action.payload.posts,
+          arts: action.payload.arts,
+          avatar: action.payload.avatar,
         },
       };
     case 'AUTH_ERROR':
@@ -47,7 +66,7 @@ const reducer = (state, action) => {
         isLoading: false,
       };
     default:
-      throw new Error();
+      throw console.log(new Error());
   }
 };
 
