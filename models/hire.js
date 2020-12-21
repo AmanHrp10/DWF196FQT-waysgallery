@@ -9,13 +9,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       //? Relationship
-      Hire.belongsTo(models.User, {
-        as: 'orderedBy',
-        foreignKey: 'orderBy',
+      Hire.belongsToMany(models.User, {
+        through: 'Transaction',
+        foreignKey: 'hireId',
+        otherKey: 'orderByUserId',
+        as: 'orderBy',
       });
-      Hire.belongsTo(models.User, {
-        as: 'orderedTo',
-        foreignKey: 'orderTo',
+      Hire.belongsToMany(models.User, {
+        through: 'Transaction',
+        foreignKey: 'hireId',
+        otherKey: 'orderToUserId',
+        as: 'orderTo',
       });
       Hire.hasOne(models.Project, {
         as: 'project',
@@ -30,8 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       started: DataTypes.DATE,
       finished: DataTypes.DATE,
       price: DataTypes.INTEGER,
-      orderBy: DataTypes.INTEGER,
-      orderTo: DataTypes.INTEGER,
       status: DataTypes.STRING,
     },
     {

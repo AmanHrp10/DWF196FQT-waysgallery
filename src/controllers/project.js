@@ -1,20 +1,62 @@
 const { Project, ProjectImage, Hire } = require('../../models');
+const Joi = require('joi');
+
+exports.getProjectById = async (req, res) => {
+  const { id: userId } = req.user;
+  const { id: hireId } = req.params;
+  try {
+    const project = await Project.findOne({
+      where: {
+        hireId,
+      },
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+      include: {
+        model: ProjectImage,
+        as: 'images',
+        attributes: ['id', 'image'],
+      },
+    });
+
+    if (!project) {
+      return res.send({
+        status: 'Request failed',
+        message: "Can't find Project",
+      });
+    }
+
+    res.send({
+      status: 'Request failed',
+      message: 'Project success fetching',
+      data: {
+        project,
+      },
+    });
+  } catch (err) {
+    return res.send({
+      status: 'Request failed',
+      message: 'Server error',
+    });
+  }
+};
 
 exports.addProject = async (req, res) => {
   try {
     const { id: userId } = req.user;
-    const { hireId } = req.params;
+    const { id: hireId } = req.params;
     const { body, files } = req;
 
-    console.log(files);
+    console.log(files.images[0].filename);
 
     //? Validation
     const schema = Joi.object({
       description: Joi.string().required(),
+      images: Joi.array().required(),
     });
 
     const { error } = schema.validate(
-      { ...body, photos: files.photos },
+      { ...body, images: files.images },
       {
         abortEarly: false,
       }
@@ -77,12 +119,24 @@ exports.addProject = async (req, res) => {
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'userId', 'UserId'],
         },
+        include: {
+          model: Project,
+          as: 'project',
+          attributes: {
+            exclude: ['hireId', 'userId', 'createdAt', 'updatedAt'],
+          },
+          include: {
+            model: ProjectImage,
+            as: 'images',
+            attributes: ['id', 'image'],
+          },
+        },
       });
       res.send({
         status: 'Request success',
         message: 'Video succesfully Added',
         data: {
-          post: response,
+          hire: response,
         },
       });
     });
@@ -90,7 +144,7 @@ exports.addProject = async (req, res) => {
     console.log(err);
     res.send({
       status: 'Request failed',
-      message: 'Server error',
+      message: err.message,
     });
   }
 };

@@ -12,13 +12,20 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Post, {
         as: 'posts',
       });
-      User.hasMany(models.Hire, {
-        as: 'orders',
-        foreignKey: 'orderTo',
+      User.belongsToMany(models.Hire, {
+        through: 'Transaction',
+        foreignKey: 'orderToUserId',
+        as: 'orderTo',
       });
-      User.hasMany(models.Hire, {
+      User.belongsToMany(models.Hire, {
+        through: 'Transaction',
+        foreignKey: 'orderByUserId',
         as: 'orderBy',
-        foreignKey: 'orderBy',
+      });
+
+      User.hasMany(models.Art, {
+        as: 'arts',
+        foreignKey: 'userId',
       });
     }
   }

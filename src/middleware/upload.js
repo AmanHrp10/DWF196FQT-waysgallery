@@ -29,11 +29,11 @@ exports.uploadFile = (file1, file2) => {
   }).fields([
     {
       name: file1,
-      maxCount: 5,
+      maxCount: file1 === 'avatar' ? 1 : 5,
     },
     {
       name: file2,
-      maxCount: 1,
+      maxCount: 5,
     },
   ]);
 

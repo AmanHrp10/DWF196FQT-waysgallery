@@ -8,6 +8,10 @@ exports.getAllUsers = async (req, res) => {
       attributes: {
         exclude: ['password', 'createdAt', 'updatedAt'],
       },
+      include: {
+        model: Art,
+        as: 'arts',
+      },
     });
 
     res.send({
@@ -72,21 +76,24 @@ exports.getUserById = async (req, res) => {
 //? Update
 exports.updateUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { body, file } = req;
+    const { id } = req.user;
+    const { body, files } = req;
 
-    const fileAvatar = file.filename;
-
-    console.log(file.filename);
+    const fileAvatar = files.avatar[0].filename;
+    console.log(fileAvatar);
 
     const schema = Joi.object({
       fullname: Joi.string().min(2),
       greeting: Joi.string(),
+      arts: Joi.array(),
     });
 
-    const { error } = schema.validate(body, {
-      abortEarly: false,
-    });
+    const { error } = schema.validate(
+      { ...body, arts: files.arts },
+      {
+        abortEarly: false,
+      }
+    );
 
     if (error) {
       return res.status(400).send({
@@ -95,7 +102,7 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    await User.update(
+    const userUpdate = await User.update(
       {
         ...body,
         avatar: fileAvatar,
@@ -107,23 +114,61 @@ exports.updateUser = async (req, res) => {
       }
     );
 
-    const userUpdated = await User.findOne({
-      where: {
-        id,
-      },
-      attributes: {
-        exclude: ['createdAt', 'updatedAt', 'password'],
-      },
-    });
-    res.status(200).send({
-      status: 'Request succes',
-      message: 'Channel was updated',
-      data: {
-        user: userUpdated,
-      },
+    if (!userUpdate) {
+      return res.send({
+        status: 'Request failed',
+        message: 'User update failed',
+      });
+    }
+
+    const art = async () => {
+      return Promise.all(
+        files.arts.map(async (art) => {
+          try {
+            await Art.create({
+              userId: id,
+              artImage: art.filename,
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        })
+      );
+    };
+
+    art().then(async () => {
+      try {
+        const response = await User.findOne({
+          where: {
+            id,
+          },
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt'],
+          },
+          include: {
+            model: Art,
+            as: 'arts',
+            attributes: {
+              exclude: ['createdAt', 'updatedAt', 'userId'],
+            },
+          },
+        });
+        res.send({
+          status: 'Request succes',
+          message: 'User was updated',
+          data: {
+            user: response,
+          },
+        });
+      } catch (err) {
+        res.send({
+          status: 'Request failed',
+          message: err.message,
+        });
+      }
     });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return res.status(500).send({
       status: 'Request failed',
       message: err.message,

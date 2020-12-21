@@ -7,26 +7,11 @@ exports.getAllPost = async (req, res) => {
       attributes: {
         exclude: ['userId', 'UserId', 'createdAt', 'updatedAt'],
       },
-      include: [
-        {
-          model: Photos,
-          as: 'photos',
-          attributes: ['id', 'image'],
-        },
-        {
-          model: User,
-          as: 'user',
-          attributes: {
-            exclude: [
-              'createdAt',
-              'updatedAt',
-              'password',
-              'greeting',
-              'avatar',
-            ],
-          },
-        },
-      ],
+      include: {
+        model: Photos,
+        as: 'photos',
+        attributes: ['id', 'image'],
+      },
     });
 
     res.send({
@@ -66,7 +51,7 @@ exports.getPostById = async (req, res) => {
           model: User,
           as: 'user',
           attributes: {
-            exclude: ['createdAt', 'updatedAt', 'password', 'avatar', ,],
+            exclude: ['createdAt', 'updatedAt', 'password'],
           },
         },
       ],
@@ -102,8 +87,6 @@ exports.addPost = async (req, res) => {
   try {
     const { id } = req.user;
     const { body, files } = req;
-
-    console.log(files);
 
     //? Validation
     const schema = Joi.object({
@@ -174,7 +157,6 @@ exports.addPost = async (req, res) => {
           post: response,
         },
       });
-      console.log(response);
     });
   } catch (err) {
     res.send({

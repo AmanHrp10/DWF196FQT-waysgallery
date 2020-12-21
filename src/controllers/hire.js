@@ -1,7 +1,16 @@
-const { Hire, Project, ProjectImage, User } = require('../../models');
+const {
+  Hire,
+  Transaction,
+  Project,
+  ProjectImage,
+  User,
+} = require('../../models');
+
+const Joi = require('joi');
 
 exports.approvedHire = async (req, res) => {
   const { id } = req.params;
+  const { id: userId } = req.user;
   try {
     const hire = await Hire.findOne({
       where: {
@@ -15,8 +24,8 @@ exports.approvedHire = async (req, res) => {
       });
     }
 
-    const update = Hire.update(
-      { status: 'Approved' },
+    const update = hire.update(
+      { status: 'Success' },
       {
         where: {
           id,
@@ -49,13 +58,19 @@ exports.approvedHire = async (req, res) => {
         },
         {
           model: User,
-          as: 'orderedBy',
+          as: 'orderBy',
           attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
         },
         {
           model: User,
-          as: 'orderedTo',
+          as: 'orderTo',
           attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
         },
       ],
     });
@@ -67,7 +82,7 @@ exports.approvedHire = async (req, res) => {
         hire: response,
       },
     });
-  } catch (er) {
+  } catch (err) {
     console.log(err);
     return res.send({
       status: 'Request failed',
@@ -85,6 +100,8 @@ exports.rejectedHire = async (req, res) => {
         id,
       },
     });
+
+    console.log(hire);
     if (!hire) {
       return res.send({
         status: 'Request failed',
@@ -92,7 +109,7 @@ exports.rejectedHire = async (req, res) => {
       });
     }
 
-    const update = Hire.update(
+    const update = await hire.update(
       { status: 'Cancel' },
       {
         where: {
@@ -110,29 +127,27 @@ exports.rejectedHire = async (req, res) => {
 
     const response = await Hire.findOne({
       where: {
-        id,
+        id: update.id,
       },
       attributes: {
         exclude: ['orderBy', 'orderTo', 'createdAt', 'updatedAt'],
       },
       include: [
         {
-          model: Project,
-          as: 'project',
-          include: {
-            model: ProjectImage,
-            as: 'images',
+          model: User,
+          as: 'orderBy',
+          attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
           },
         },
         {
           model: User,
-          as: 'orderedBy',
+          as: 'orderTo',
           attributes: ['id', 'email', 'fullname'],
-        },
-        {
-          model: User,
-          as: 'orderedTo',
-          attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
         },
       ],
     });
@@ -148,22 +163,68 @@ exports.rejectedHire = async (req, res) => {
     console.log(err);
     return res.send({
       status: 'Request failed',
-      message: 'Server error',
+      message: err.message,
     });
   }
 };
 
+//?
+
 //? Add Hire
 exports.createHire = async (req, res) => {
-  const { id } = req.user;
+  const { id: orderBy } = req.user;
+  const { id: orderTo } = req.params;
   const body = req.body;
   try {
-    const hire = await Hire.create({
-      ...body,
-      status: 'Pending',
-      orderBy: id,
+    const user = await User.findOne({
+      where: {
+        id: orderTo,
+      },
     });
-    if (!hire) {
+
+    console.log(user);
+
+    if (user.id === orderBy) {
+      return res.send({
+        status: 'Request failed',
+        message: 'Cannot Order to your self',
+      });
+    }
+
+    const schema = Joi.object({
+      title: Joi.string().min(5).required(),
+      description: Joi.string().required(),
+      started: Joi.date().required(),
+      finished: Joi.date().required(),
+      price: Joi.number().required(),
+    });
+
+    const { error } = schema.validate(
+      { ...body },
+      {
+        abortEarly: false,
+      }
+    );
+
+    if (error) {
+      return res.status(400).send({
+        status: 'Request failed',
+        message: error.details.map((err) => err.message),
+      });
+    }
+
+    const hireCreate = await Hire.create({
+      ...body,
+      status: 'Waiting Accept',
+    });
+
+    await Transaction.create({
+      hireId: hireCreate.id,
+      orderByUserId: orderBy,
+      orderToUserId: user.id,
+    });
+
+    if (!hireCreate) {
       res.status(400).json({
         status: 'failed',
         message: 'Failed, please try again',
@@ -171,20 +232,26 @@ exports.createHire = async (req, res) => {
     }
 
     const response = await Hire.findOne({
-      where: { id: hire.id },
+      where: { id: hireCreate.id },
       attributes: {
         exclude: ['orderBy', 'orderTo', 'createdAt', 'updatedAt'],
       },
       include: [
         {
           model: User,
-          as: 'orderedBy',
+          as: 'orderBy',
           attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
         },
         {
           model: User,
-          as: 'orderedTo',
+          as: 'orderTo',
           attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
         },
       ],
     });
@@ -200,7 +267,7 @@ exports.createHire = async (req, res) => {
     console.log(err);
     res.send({
       status: 'Request failed',
-      message: 'Server error',
+      message: err.message,
     });
   }
 };

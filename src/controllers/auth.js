@@ -1,4 +1,4 @@
-const { User, Post } = require('../../models');
+const { User, Post, Art, Photos } = require('../../models');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -38,6 +38,20 @@ exports.register = async (req, res) => {
       email,
       password: passwordHash,
       fullname,
+      include: [
+        {
+          model: Post,
+          as: 'posts',
+          include: {
+            model: Photos,
+            as: 'photos',
+          },
+        },
+        {
+          model: Art,
+          as: 'arts',
+        },
+      ],
     });
     const privateKey = process.env.JWT_PRIVATE_KEY;
     const token = jwt.sign(
@@ -46,6 +60,8 @@ exports.register = async (req, res) => {
         email: newUser.email,
         fullname: newUser.fullname,
         posts: newUser.posts,
+        avatar: newUser.avatar,
+        arts: newUser.arts,
       },
       privateKey
     );
@@ -57,8 +73,10 @@ exports.register = async (req, res) => {
         user: {
           id: newUser.id,
           email: newUser.email,
-          avatar: newUser.avatar,
           fullname: newUser.fullname,
+          posts: newUser.posts,
+          arts: newUser.arts,
+          avatar: newUser.avatar,
           token,
         },
       },
@@ -102,10 +120,20 @@ exports.login = async (req, res) => {
       where: {
         email,
       },
-      include: {
-        model: Post,
-        as: 'posts',
-      },
+      include: [
+        {
+          model: Post,
+          as: 'posts',
+          include: {
+            model: Photos,
+            as: 'photos',
+          },
+        },
+        {
+          model: Art,
+          as: 'arts',
+        },
+      ],
     });
 
     //?if email not exist
@@ -136,6 +164,7 @@ exports.login = async (req, res) => {
         avatar: user.avatar,
         fullname: user.fullname,
         posts: user.posts,
+        arts: user.arts,
       },
       privateKey
     );
@@ -146,8 +175,13 @@ exports.login = async (req, res) => {
       message: 'Successfully login',
       data: {
         user: {
+          id: user.id,
           email: user.email,
           fullname: user.fullname,
+          avatar: user.avatar,
+          fullname: user.fullname,
+          posts: user.posts,
+          arts: user.arts,
           token,
         },
       },

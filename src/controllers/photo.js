@@ -1,4 +1,5 @@
 const { Photos, Post, User } = require('../../models');
+const { post } = require('../routes');
 
 exports.addPhoto = async (req, res) => {
   try {
@@ -46,6 +47,29 @@ exports.addPhoto = async (req, res) => {
     res.send({
       status: 'Request failed',
       message: err.message,
+    });
+  }
+};
+
+exports.getAllPhoto = async (req, res) => {
+  try {
+    const response = await Photos.findAll({
+      include: {
+        model: Post,
+        as: 'post',
+      },
+    });
+    res.send({
+      status: 'Request Success',
+      message: 'Photos was fetched',
+      data: {
+        photos: response,
+      },
+    });
+  } catch (err) {
+    return res.send({
+      status: 'Request failed',
+      message: 'Server error',
     });
   }
 };

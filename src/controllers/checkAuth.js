@@ -1,4 +1,4 @@
-const { User, Post } = require('../../models');
+const { User, Post, Art, Photos } = require('../../models');
 
 exports.checkAuth = async (req, res) => {
   try {
@@ -11,13 +11,23 @@ exports.checkAuth = async (req, res) => {
       attributes: {
         exclude: ['createdAt', 'updatedAt', 'password'],
       },
-      include: {
-        model: Post,
-        as: 'posts',
-        attributes: {
-          exclude: ['userId', 'UserId', 'updatedAt', 'createdAt'],
+      include: [
+        {
+          model: Post,
+          as: 'posts',
+          include: {
+            model: Photos,
+            as: 'photos',
+          },
+          attributes: {
+            exclude: ['userId', 'UserId', 'updatedAt', 'createdAt'],
+          },
         },
-      },
+        {
+          model: Art,
+          as: 'arts',
+        },
+      ],
     });
     res.send({
       status: 'Request succes',
