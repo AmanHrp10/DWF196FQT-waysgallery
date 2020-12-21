@@ -1,19 +1,19 @@
 import { Fragment } from 'react';
 import InputFile from '../components/atoms/inputFile';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import InputDate from '../components/atoms/inputDate/index';
 
 export default function Test() {
+  const handleChange = (e) => {
+    console.log(e);
+  };
   return (
     <Fragment>
-      <InputFile
-        width='500px'
-        height='300px'
-        icon={<AiOutlineCloudUpload size='10em' color='#e7e7e7' />}
-        title={
-          <p>
-            <span style={{ color: '#2FC4B2' }}>Brouse,</span> to choose a file
-          </p>
-        }
+      <InputDate
+        type='date'
+        title='Start Project'
+        onChange={(e) => handleChange(e)}
+        icon={<AiOutlineCloudUpload />}
       />
     </Fragment>
   );

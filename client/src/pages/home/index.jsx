@@ -3,9 +3,7 @@ import { Dropdown, ButtonGroup, Button } from 'react-bootstrap';
 import InputForm from '../../components/atoms/inputForm/index';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useState } from 'react';
-import TodayPosts from '../../components/molecules/home/index';
-import Order from '../../components/molecules/order';
-import Offer from '../../components/molecules/offer';
+import TodayPosts from '../../components/molecules/todaysPost/index';
 import './home.css';
 import Navbar from '../../components/molecules/navbar';
 import { AppContext } from '../../context/AppContext';
@@ -16,15 +14,12 @@ export default function Home() {
   const { user } = state;
 
   console.log(user);
-  const [dropDown, setDropDown] = useState("Today's");
+  const [dropDown, setDropDown] = useState('All');
+  const handleAll = () => {
+    setDropDown('All');
+  };
   const handleTodays = () => {
     setDropDown("Today's");
-  };
-  const handleOrders = () => {
-    setDropDown('My Orders');
-  };
-  const handleOffers = () => {
-    setDropDown('My Offers');
   };
   return (
     <Fragment>
@@ -50,32 +45,22 @@ export default function Home() {
               </div>
 
               <Dropdown.Menu>
+                <Dropdown.Item href='' onClick={handleAll}>
+                  All
+                </Dropdown.Item>
                 <Dropdown.Item href='' onClick={handleTodays}>
                   Today's
-                </Dropdown.Item>
-                <Dropdown.Item href='' onClick={handleOrders}>
-                  My Orders
-                </Dropdown.Item>
-                <Dropdown.Item href='' onClick={handleOffers}>
-                  My Offers
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </div>
-          {dropDown === "Today's" ? (
-            <div className='col-3 text-right'>
-              <InputForm title={`Search`} />
-            </div>
-          ) : null}
+
+          <div className='col-3 text-right'>
+            <InputForm title={`Search`} />
+          </div>
         </div>
         <div className='row mt-4'>
-          {dropDown === "Today's" ? (
-            <TodayPosts />
-          ) : dropDown === 'My Orders' ? (
-            <Order />
-          ) : (
-            <Offer />
-          )}
+          <TodayPosts />
         </div>
       </div>
     </Fragment>

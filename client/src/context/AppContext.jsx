@@ -6,6 +6,7 @@ const initialState = {
   isLogin: false,
   isLoading: true,
   user: null,
+  transactionDropdown: 'My Orders',
 };
 
 const reducer = (state, action) => {
@@ -35,7 +36,7 @@ const reducer = (state, action) => {
         user: {
           id: action.payload.id,
           email: action.payload.email,
-          name: action.payload.fullname,
+          fullname: action.payload.fullname,
           greeting: action.payload.greeting,
           posts: action.payload.posts,
           arts: action.payload.arts,
@@ -56,6 +57,21 @@ const reducer = (state, action) => {
           arts: action.payload.arts,
           avatar: action.payload.avatar,
         },
+      };
+
+    case 'DROPDOWN_ORDERS':
+      return {
+        ...state,
+        isLogin: true,
+        isLoading: false,
+        transactionDropdown: 'My Orders',
+      };
+    case 'DROPDOWN_OFFERS':
+      return {
+        ...state,
+        isLogin: true,
+        isLoading: false,
+        transactionDropdown: 'My Offers',
       };
     case 'AUTH_ERROR':
     case 'LOGOUT':

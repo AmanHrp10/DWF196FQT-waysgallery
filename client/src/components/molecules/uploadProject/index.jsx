@@ -1,5 +1,4 @@
 import { Fragment, useState } from 'react';
-import './uploadPost.css';
 import InputForm from '../../atoms/inputForm/index';
 import Textarea from '../../atoms/textArea';
 import Button from '../../atoms/button';
@@ -7,22 +6,84 @@ import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { FiPlus } from 'react-icons/fi';
 import InputFile from '../../atoms/inputFile/index';
 import { API } from '../../../config/api';
-import './uploadPost.css';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
-export default function UploadPost() {
+export default function UploadProject() {
+  // const [formData, setFormData] = useState({
+  //   description: '',
+  // });
+
+  // const { description } = formData;
+
+  // const [fileData, setFileData] = useState({
+  //   images: [],
+  // });
+
+  // const router = useHistory();
+
+  // const handleFile = (e) => {
+  //   setFileData({
+  //     images: [...fileData.images, e.target.files[0]],
+  //   });
+  // };
+
+  // const handleForm = (e) => {
+  //   setFormData({
+  //     ...formData,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
+
+  // console.log(formData);
+  // console.log(fileData.images[0].name);
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const body = formData;
+
+  //   // body.append('description', description);
+
+  //   // fileData.images.map((image) => {
+  //   //   body.append('photos', image);
+  //   // });
+
+  //   const config = {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data',
+  //     },
+  //   };
+  //   console.log(body);
+
+  //   try {
+  //     // const response = await API.post('/post', body, config);
+  //     // if (response.data.status == 'Request failed') {
+  //     //   response.data.error.message.map((err) => alert(err));
+  //     // }
+  //     // setFormData({
+  //     //   title: '',
+  //     //   description: '',
+  //     // });
+  //     // alert('Post was added');
+  //     // router.push('/');
+  //   } catch (err) {
+  //     console.log(err);
+  //     alert('Failed');
+  //   }
+  // };
+
   const [formData, setFormData] = useState({
-    title: '',
     description: '',
   });
 
-  const { title, description } = formData;
+  const { description } = formData;
 
   const [fileData, setFileData] = useState({
     images: [],
   });
 
   const router = useHistory();
+  const { id } = useParams();
 
   const handleFile = (e) => {
     setFileData({
@@ -41,11 +102,10 @@ export default function UploadPost() {
     e.preventDefault();
 
     const body = new FormData();
-    body.append('title', title);
     body.append('description', description);
 
     fileData.images.map((image) => {
-      body.append('photos', image);
+      body.append('images', image);
     });
 
     const config = {
@@ -55,8 +115,9 @@ export default function UploadPost() {
     };
 
     try {
-      const response = await API.post('/post', body, config);
+      const response = await API.post(`/project/${id}`, body, config);
 
+      console.log(response);
       if (response.data.status == 'Request failed') {
         response.data.error.message.map((err) => alert(err));
       }
@@ -64,9 +125,8 @@ export default function UploadPost() {
         title: '',
         description: '',
       });
-
       alert('Post was added');
-      router.push('/');
+      router.push('/transaction');
     } catch (err) {
       console.log(err);
       alert('Failed');
@@ -92,13 +152,7 @@ export default function UploadPost() {
               }
             />
           </div>
-          <div className='col-4 mt-4'>
-            <InputForm
-              title='Title'
-              name='title'
-              value={title}
-              onChange={(e) => handleForm(e)}
-            />
+          <div className='col-4'>
             <Textarea
               title='Description'
               rows='5'
@@ -108,9 +162,8 @@ export default function UploadPost() {
               onChange={(e) => handleForm(e)}
             />
             <div className='d-flex justify-content-around px-5 mt-5'>
-              <Button title='Cancel' className='button-cancel btn-sm px-4' />
               <Button
-                title='Post'
+                title='Send Project'
                 className='button-post btn-sm px-4 text-white'
                 style={{ color: '#000' }}
                 onClick={(e) => handleSubmit(e)}

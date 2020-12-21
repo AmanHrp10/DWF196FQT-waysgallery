@@ -82,7 +82,7 @@ export default function ModalRegister({ onHide, show, isRegister }) {
           />
           <Button
             title='Register'
-            className='button-register btn-sm w-100'
+            className='button-register btn-sm w-100 text-white'
             onClick={(e) => handlePost(e)}
           />
         </div>

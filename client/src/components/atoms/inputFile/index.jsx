@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import './inputFile.css';
-import { AiOutlineCloudUpload } from 'react-icons/ai';
 
 export default function InputFile({
   title,

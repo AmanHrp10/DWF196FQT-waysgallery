@@ -2,7 +2,7 @@ import { Fragment, useContext } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import Brand from '../../../images/brand.png';
-import Profile from '../../../images/Profile1.png';
+import DefaultProfile from '../../../images/defaultProfile.png';
 import Button from '../../atoms/button';
 import { FaRegUser } from 'react-icons/fa';
 import { BsFolderSymlink } from 'react-icons/bs';
@@ -45,12 +45,14 @@ export default function Navbar() {
               />
               <Dropdown>
                 <Dropdown.Toggle>
-                  <img
-                    src={Profile}
-                    alt=''
-                    width='70%'
-                    style={{ borderRadius: '70%' }}
-                  />
+                  <div className='image-navbar navbar-brand'>
+                    <img
+                      src={DefaultProfile}
+                      alt=''
+                      width='100%'
+                      style={{ borderRadius: '70%' }}
+                    />
+                  </div>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item onClick={() => router.push('/profile')}>
@@ -63,7 +65,7 @@ export default function Navbar() {
                     />
                     Profile
                   </Dropdown.Item>
-                  <Dropdown.Item>
+                  <Dropdown.Item onClick={() => router.push('/transaction')}>
                     <GoBook
                       size='1.3em'
                       style={{ marginRight: '9px', color: '#00E016' }}

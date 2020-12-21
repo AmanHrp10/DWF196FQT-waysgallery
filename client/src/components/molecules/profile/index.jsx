@@ -1,19 +1,27 @@
 import { Fragment, useContext } from 'react';
 import Button from '../../atoms/button';
-import Thumbnail from '../../../images/thumbnail.png';
 import Profile from '../../../images/Profile.png';
 import './profile.css';
 import { useHistory } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
+import { Skeleton } from 'react-loading-skeleton';
 
 export default function ProfilePage() {
   const [state] = useContext(AppContext);
   const { user } = state;
 
-  console.log(user);
+  //? post Index latest
+  const latesPostIndex = user.posts.length - 1;
+
+  //? Photos Index latest from Post
+  const latesPhotosIndex = user.posts[latesPostIndex].photos.length - 1;
+
+  const latesPhotoPost = user.posts[latesPostIndex].photos[latesPhotosIndex];
 
   const router = useHistory();
-  return (
+  return !user.posts && !user.arts ? (
+    <Skeleton />
+  ) : (
     <Fragment>
       <div className='container' style={{ marginTop: '110px' }}>
         <div className='row'>
@@ -39,32 +47,38 @@ export default function ProfilePage() {
             />
           </div>
           <div className='col-6 justify-content-right'>
-            <div className='thumbnail-profile'>
+            <div
+              className='thumbnail-profile'
+              onClick={() =>
+                router.push(`/detail-post/${user.posts[latesPostIndex].id}`)
+              }
+            >
               <img
-                src={Thumbnail}
+                src={`http://localhost:8000/uploads/${latesPhotoPost.image}`}
                 alt=''
                 width='100%'
-                style={{ padding: '24px' }}
+                height='100%'
+                style={{ padding: '24px', backgroundSize: 'cover' }}
               />
               <div className='background'></div>
             </div>
           </div>
         </div>
-        <div className='my-work mt-5'>
+        <div className='my-work my-5'>
           <h5 className='text-bold'>My Works</h5>
-          <div className='row justify-content-around'>
-            <div className='col-3'>
-              <img src={Thumbnail} alt='' />
-            </div>
-            <div className='col-3'>
-              <img src={Thumbnail} alt='' />
-            </div>
-            <div className='col-3'>
-              <img src={Thumbnail} alt='' />
-            </div>
-            <div className='col-3'>
-              <img src={Thumbnail} alt='' />
-            </div>
+          <div className='row'>
+            {user.arts.map((art) => {
+              return (
+                <div className='col-3 p-2'>
+                  <img
+                    src={`http://localhost:8000/uploads/${art.artImage}`}
+                    alt=''
+                    width='100%'
+                    height='100%'
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

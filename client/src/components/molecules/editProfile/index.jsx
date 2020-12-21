@@ -16,7 +16,7 @@ export default function EditProfile() {
   const [formData, setFormData] = useState({
     avatar: '',
     greeting: '',
-    fullname: user.name,
+    fullname: user.fullname,
     arts: [],
   });
 
@@ -31,7 +31,7 @@ export default function EditProfile() {
     const body = new FormData();
     body.append('avatar', avatar);
     body.append('greeting', greeting);
-    body.append('fullname', user.name);
+    body.append('fullname', fullname);
     body.append('arts', arts);
 
     const config = {

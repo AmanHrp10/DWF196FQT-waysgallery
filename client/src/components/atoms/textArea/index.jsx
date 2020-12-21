@@ -5,6 +5,7 @@ export default function Textarea({
   rows,
   onChange,
   className,
+  value,
 }) {
   return (
     <textarea
@@ -14,6 +15,7 @@ export default function Textarea({
       placeholder={title}
       onChange={onChange}
       className={`form-control ${className}`}
+      value={value}
     />
   );
 }

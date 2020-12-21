@@ -1,13 +1,41 @@
-import { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
+import Moment from 'moment';
+import { API } from '../../../config/api';
+import { RiErrorWarningLine } from 'react-icons/ri';
+import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { FcCancel } from 'react-icons/fc';
+import Button from '../../atoms/button';
+
+import './order.css';
+import { useHistory } from 'react-router-dom';
 
 export default function Order() {
+  const [datas, setDatas] = useState([]);
+
+  const router = useHistory();
+
+  const transaction = async () => {
+    try {
+      const response = await API(`/transaction?status=my-order`);
+      setDatas(response.data.data.orders);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    transaction();
+  }, []);
+
+  console.log(datas);
+
   return (
     <Fragment>
       <div className='container'>
         <Table striped bordered hover>
           <thead>
-            <tr>
+            <tr className='text-center'>
               <th>No</th>
               <th>Vendor</th>
               <th>Order</th>
@@ -18,15 +46,51 @@ export default function Order() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Amanudin Harahap</td>
-              <td>Make a waysGallery</td>
-              <td>13 Desember 2020</td>
-              <td>20 Desember 2020</td>
-              <td>Pending</td>
-              <td>Oke</td>
-            </tr>
+            {datas.length > 0 &&
+              datas.map((data, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>
+                      {data.orderTo &&
+                        data.orderTo.map((user) => user.fullname)}
+                    </td>
+                    <td>{data.title}</td>
+                    <td>{Moment(data.started).format('LL')}</td>
+                    <td>{Moment(data.finished).format('LL')}</td>
+                    <td
+                      className={
+                        data.status === 'Waiting Accept'
+                          ? 'text-warning'
+                          : data.status === 'Success'
+                          ? 'text-success'
+                          : data.status === 'Cancel'
+                          ? 'text-danger'
+                          : null
+                      }
+                    >
+                      {data.status}
+                    </td>
+                    <td className='text-center'>
+                      {data.status === 'Waiting Accept' ? (
+                        <RiErrorWarningLine color='#ff9900' />
+                      ) : data.status === 'Success' ? (
+                        <AiOutlineCheckCircle color='#3BB54A' />
+                      ) : data.status === 'Cancel' ? (
+                        <FcCancel color='#red' />
+                      ) : data.status === 'Complete' ? (
+                        <Button
+                          title='View Project'
+                          className='btn-sm button-post text-white'
+                          onClick={(e) =>
+                            router.push(`/detail-project/${data.id}`)
+                          }
+                        />
+                      ) : null}
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </Table>
       </div>

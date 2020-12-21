@@ -28,7 +28,6 @@ export default function ModalLogin({ onHide, show, isLogin }) {
         },
       };
       const response = await API.post('/login', body, config);
-      console.log(response);
 
       //? Context
       dispatch({
@@ -72,7 +71,7 @@ export default function ModalLogin({ onHide, show, isLogin }) {
           />
           <Button
             title='Login'
-            className='button-register btn-sm w-100'
+            className='button-register btn-sm w-100 text-white '
             onClick={(e) => handleLogin(e)}
           />
         </div>

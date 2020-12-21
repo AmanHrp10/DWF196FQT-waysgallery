@@ -1,0 +1,10 @@
+.dropdown-item:active {
+    background: none;
+}
+.dropdown-transaction{
+    background: #e7e7e7;
+    padding: 0 10px;
+    border-radius: 3px;
+    margin-top: -30px;
+    margin-bottom: 20px;
+}

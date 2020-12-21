@@ -7,10 +7,14 @@ export default function InputForm({
   className,
   name,
   value,
+  ref,
+  onClick,
+  label,
 }) {
   return (
     <Fragment>
       <input
+        onClick={onClick}
         onChange={onChange}
         type={type}
         className={`form-control ${className}`}

@@ -14,8 +14,10 @@ import { AppContext } from './context/AppContext';
 import Profile from './pages/profile/index';
 import DetailPostPage from './pages/detailPost/index';
 import DetailUserPage from './pages/detailUser/index';
-import InputFile from './components/atoms/inputFile/index';
 import Test from './pages/test';
+import Transaction from './pages/transaction/index';
+import UploadProjectPage from './pages/uploadProject/index';
+import DetailProjectPage from './pages/detailProject/index';
 
 //? Cek Token on headers
 if (localStorage.token) {
@@ -58,11 +60,18 @@ function App() {
       <Switch>
         <Route path='/landing' component={Landing} />
         <PrivateRoute path='/upload' component={UploadPage} />
-        <PrivateRoute path='/hire' component={HirePage} />
+        <PrivateRoute path='/hire/:id' component={HirePage} />
         <PrivateRoute path='/edit-profile' component={EditProfile} />
         <PrivateRoute path='/profile' component={Profile} />
-        <PrivateRoute path='/detail-post' component={DetailPostPage} />
+        <PrivateRoute path='/detail-post/:id' component={DetailPostPage} />
         <Route path='/detail-user' component={DetailUserPage} />
+        <Route path='/detail-project/:id' component={DetailProjectPage} />
+        <PrivateRoute path='/transaction' component={Transaction} />
+        <PrivateRoute
+          path='/upload-project/:id'
+          component={UploadProjectPage}
+        />
+
         <Route path='/test' component={Test} />
 
         <PrivateRoute path='/' component={Home} />

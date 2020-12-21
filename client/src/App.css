@@ -5,19 +5,23 @@
 * {
   font-family: 'Andika New Basic',
   sans-serif;
-  ;
-}
+  ;}
 
 
 
 /** Button */
+.btn,
 .btn-primary,
+.btn-success,
+.btn-success:hover,
 .btn-primary:hover,
 .btn-primary:focus
 {
   background: none;
   border: none;
 }
+
+
 
 
 
@@ -68,6 +72,8 @@ button:focus {
 textarea.form-control,
 input.form-control{
   background: #e7e7e7;
+  border: 1px solid #2FC4B2;
+
 }
 
 

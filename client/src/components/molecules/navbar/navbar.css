@@ -2,6 +2,10 @@
     cursor: pointer;
 }
 
+.image-navbar{
+    width: 40px;
+}
+
 .button-upload{
     background: #2FC4B2;
     position: absolute;
