@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useState } from 'react';
 import InputForm from '../../atoms/inputForm/index';
 import Textarea from '../../atoms/textArea';
 import Button from '../../atoms/button/index';
@@ -59,8 +59,6 @@ export default function HirePost() {
       console.log(err);
     }
   };
-
-  const hiddenDate = useRef(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -6,9 +6,14 @@ import { API, setToken } from '../../../config/api';
 import './modal.css';
 import { AppContext } from '../../../context/AppContext';
 import { useHistory } from 'react-router-dom';
+import ModalAlert from '../../atoms/modalAlert/index';
 
-export default function ModalLogin({ onHide, show, isLogin }) {
+export default function ModalLogin({ onHide, show }) {
   const [state, dispatch] = useContext(AppContext);
+  const [popUp, setPopUp] = useState(false);
+  const [alert, setAlert] = useState({
+    text: '',
+  });
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -19,17 +24,23 @@ export default function ModalLogin({ onHide, show, isLogin }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+    const body = JSON.stringify({ email, password });
+    const config = {
+      headers: {
+        'content-type': 'application/json',
+      },
+    };
     try {
-      const body = JSON.stringify({ email, password });
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
       const response = await API.post('/login', body, config);
-
-      //? Context
+      console.log(response);
+      if (response.data.status === 'Request failed') {
+        setAlert({
+          text: 'Login Failed',
+        });
+        setPopUp(true);
+      }
+      console.log(response.data.status);
+      // ? Context
       dispatch({
         type: 'LOGIN',
         payload: response.data.data.user,
@@ -37,8 +48,10 @@ export default function ModalLogin({ onHide, show, isLogin }) {
 
       //? take a token
       setToken(response.data.data.user.token);
-
-      router.push('/');
+      setAlert({
+        text: 'Login Succes',
+      });
+      setPopUp(true);
     } catch (err) {
       console.log(err);
     }
@@ -48,9 +61,14 @@ export default function ModalLogin({ onHide, show, isLogin }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handlePopUp = () => {
+    setPopUp(false);
+    router.push('/');
+    return show;
+  };
   return (
     <Fragment>
-      <Modal show={show} onHide={onHide}>
+      <Modal show={show} onHide={handlePopUp}>
         <div className='wrapper-modal'>
           <h3 style={{ color: '#2FC4B2', fontWeight: '900' }}>Login</h3>
           <InputForm
@@ -72,10 +90,16 @@ export default function ModalLogin({ onHide, show, isLogin }) {
           <Button
             title='Login'
             className='button-register btn-sm w-100 text-white '
-            onClick={(e) => handleLogin(e)}
+            onClick={handleLogin}
           />
         </div>
       </Modal>
+      <ModalAlert
+        className='modal-alert'
+        popUp={popUp}
+        handlePopUp={handlePopUp}
+        text={alert.text}
+      />
     </Fragment>
   );
 }

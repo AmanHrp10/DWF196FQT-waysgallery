@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       hireId: DataTypes.INTEGER,
       userId: DataTypes.INTEGER,
-      description: DataTypes.STRING,
+      description: DataTypes.TEXT,
     },
     {
       sequelize,

@@ -12,6 +12,17 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Post, {
         as: 'posts',
       });
+
+      User.belongsToMany(models.User, {
+        as: 'following',
+        foreignKey: 'followerId',
+        through: 'Follows',
+      });
+      User.belongsToMany(models.User, {
+        as: 'followers',
+        foreignKey: 'followingId',
+        through: 'Follows',
+      });
       User.belongsToMany(models.Hire, {
         through: 'Transaction',
         foreignKey: 'orderToUserId',

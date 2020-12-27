@@ -11,3 +11,9 @@
     background: #e7e7e7;
     font-weight: bold;
 }
+.modal-alert .modal-dialog .modal-content {
+    height: 10px;
+    color: #fff;
+    background: #2fc4b370;
+    padding: 25px 35px
+}

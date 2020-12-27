@@ -20,7 +20,6 @@ export default function InputFile({
   const handleChange = (e) => {
     let reader = new FileReader();
     let files = e.target.files[0];
-
     reader.onloadend = () => {
       setPreview(reader.result);
     };
@@ -45,7 +44,7 @@ export default function InputFile({
           {!preview ? (
             icon
           ) : (
-            <img width='100%' src={preview} style={{ padding: '5px' }} />
+            <img width='100%' alt='' src={preview} style={{ padding: '5px' }} />
           )}
 
           <input

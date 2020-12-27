@@ -45,7 +45,7 @@ export default function UploadPost() {
     body.append('description', description);
 
     fileData.images.map((image) => {
-      body.append('photos', image);
+      return body.append('photos', image);
     });
 
     const config = {
@@ -57,7 +57,7 @@ export default function UploadPost() {
     try {
       const response = await API.post('/post', body, config);
 
-      if (response.data.status == 'Request failed') {
+      if (response.data.status === 'Request failed') {
         response.data.error.message.map((err) => alert(err));
       }
       setFormData({

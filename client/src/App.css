@@ -23,7 +23,9 @@
 
 
 
-
+.button-danger {
+  background: #eb1e1e;
+}
 
 .button-post {
   background: #2FC4B2;

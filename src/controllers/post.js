@@ -1,11 +1,12 @@
 const { Post, Photos, User } = require('../../models');
+const { Op } = require('sequelize');
 const Joi = require('joi');
 
 exports.getAllPost = async (req, res) => {
   try {
     const posts = await Post.findAll({
       attributes: {
-        exclude: ['userId', 'UserId', 'createdAt', 'updatedAt'],
+        exclude: ['userId', 'UserId', 'updatedAt'],
       },
       include: {
         model: Photos,
@@ -288,5 +289,51 @@ exports.deletePost = async (req, res) => {
         error: 'Server error',
       },
     });
+  }
+};
+
+//? Search Post
+exports.searchPost = async (req, res) => {
+  try {
+    const { title } = req.body;
+    const posts = await Post.findAll({
+      where: {
+        title: { [Op.like]: `%${title}%` },
+      },
+    });
+
+    if (posts.length === 0) {
+      return res.send({
+        status: 'Request failed',
+        message: 'Not post',
+      });
+    }
+
+    res.send({
+      status: 'Request success',
+      message: 'Posts was finding',
+      data: {
+        posts,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.send({
+      status: 'Request failed',
+      message: err.message,
+    });
+  }
+};
+
+//? post Today
+
+exports.getPostToday = async (req, res) => {
+  const d = new Date();
+
+  // const date = Math.floor(d.setDate(d.getDate()));
+  console.log('Ini', d.getDay());
+  try {
+  } catch (err) {
+    console.log(err);
   }
 };

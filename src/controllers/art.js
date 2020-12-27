@@ -3,55 +3,30 @@ const Joi = require('joi');
 
 exports.addArt = async (req, res) => {
   try {
-    const { userId } = req.user;
-    const { body } = req;
+    const { id: userId } = req.user;
+    const { files } = req;
 
-    console.log(userId);
+    let images = [];
 
-    //? Validation
-    const schema = Joi.object({
-      title: Joi.string().required(),
-      description: Joi.string().required(),
-      price: Joi.number().integer().required(),
-      orderTo: Joi.number(),
-    });
-
-    const { error } = schema.validate(body, {
-      abortEarly: false,
-    });
-
-    if (error) {
-      return res.send({
-        status: 'Request failed',
-        error: {
-          message: error.details.map((err) => err.message),
-        },
+    files.arts.map((file) => {
+      images.push({
+        userId,
+        artImage: file.filename,
       });
-    }
-
-    const newArt = await Art.create({
-      ...body,
-      started: new Date(),
-      finished: new Date(),
-      orderBy: userId,
     });
+    const arts = await Art.bulkCreate(images);
 
-    const newArtAdd = await Art.findOne({
-      where: {
-        id: newArt.id,
-      },
-    });
     res.send({
       status: 'Request success',
-      message: 'Video succesfully Added',
+      message: 'Arts was add',
       data: {
-        post: newArtAdd,
+        arts,
       },
     });
   } catch (err) {
     res.send({
       status: 'Request failed',
-      message: err.message,
+      message: 'Server error',
     });
   }
 };

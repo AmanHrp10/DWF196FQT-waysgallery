@@ -10,7 +10,6 @@ const Joi = require('joi');
 
 exports.approvedHire = async (req, res) => {
   const { id } = req.params;
-  const { id: userId } = req.user;
   try {
     const hire = await Hire.findOne({
       where: {
@@ -101,7 +100,6 @@ exports.rejectedHire = async (req, res) => {
       },
     });
 
-    console.log(hire);
     if (!hire) {
       return res.send({
         status: 'Request failed',
@@ -181,8 +179,6 @@ exports.createHire = async (req, res) => {
         id: orderTo,
       },
     });
-
-    console.log(user);
 
     if (user.id === orderBy) {
       return res.send({
@@ -268,6 +264,103 @@ exports.createHire = async (req, res) => {
     res.send({
       status: 'Request failed',
       message: err.message,
+    });
+  }
+};
+
+exports.confirmProject = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const hire = await Hire.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!hire) {
+      return res.send({
+        status: 'Request failed',
+        message: `Id ${id} not found`,
+      });
+    }
+
+    const update = await hire.update(
+      { status: 'Confirm' },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+
+    if (!update) {
+      return res.send({
+        status: 'Request failed',
+        message: 'Confirm failed',
+      });
+    }
+
+    const response = await Hire.findOne({
+      where: {
+        id: update.id,
+      },
+      attributes: {
+        exclude: ['orderBy', 'orderTo', 'createdAt', 'updatedAt'],
+      },
+      include: [
+        {
+          model: User,
+          as: 'orderBy',
+          attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
+        },
+        {
+          model: User,
+          as: 'orderTo',
+          attributes: ['id', 'email', 'fullname'],
+          through: {
+            attributes: [],
+          },
+        },
+      ],
+    });
+
+    res.send({
+      status: 'Request succes',
+      message: 'Hire was Confirm',
+      data: {
+        hire: response,
+      },
+    });
+  } catch (err) {
+    console.log(err);
+    return res.send({
+      status: 'Request failed',
+      message: err.message,
+    });
+  }
+};
+
+exports.getHireById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const hire = await Hire.findOne({
+      id,
+    });
+
+    res.send({
+      status: 'Request success',
+      message: 'Data hire was fetched',
+      data: {
+        hire,
+      },
+    });
+  } catch (err) {
+    return res.send({
+      status: 'Request failed',
+      message: 'Server error',
     });
   }
 };

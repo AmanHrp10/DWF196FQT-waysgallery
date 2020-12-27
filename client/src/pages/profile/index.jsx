@@ -1,12 +1,12 @@
 import { Fragment } from 'react';
 import Navbar from '../../components/molecules/navbar/index';
-import ProfilePage from '../../components/molecules/profile';
+import Profile from '../../components/molecules/profile';
 
-export default function Profile() {
+export default function ProfilePage() {
   return (
     <Fragment>
       <Navbar />
-      <ProfilePage />
+      <Profile />
     </Fragment>
   );
 }

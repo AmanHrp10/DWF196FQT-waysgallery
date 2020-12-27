@@ -5,58 +5,75 @@ export const AppContext = createContext();
 const initialState = {
   isLogin: false,
   isLoading: true,
-  user: null,
+  token: localStorage.getItem('token') ? localStorage.getItem('token') : null,
+  user: localStorage.getItem('user') ? localStorage.getItem('user') : null,
   transactionDropdown: 'My Orders',
+  follow: [],
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN':
-      localStorage.setItem('token', action.payload.token);
       return {
         ...state,
         isLogin: true,
         isLoading: false,
-        user: {
-          id: action.payload.id,
-          email: action.payload.email,
-          name: action.payload.fullname,
-          greeting: action.payload.greeting,
-          posts: action.payload.posts,
-          arts: action.payload.arts,
-          avatar: action.payload.avatar,
-        },
+        user: localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: action.payload.id,
+            email: action.payload.email,
+            name: action.payload.fullname,
+            avatar: action.payload.avatar,
+          })
+        ),
+        token: localStorage.setItem('token', action.payload.token),
       };
 
-    case 'EDIT_USER':
-      return {
-        ...state,
-        isLogin: true,
-        isLoading: false,
-        user: {
-          id: action.payload.id,
-          email: action.payload.email,
-          fullname: action.payload.fullname,
-          greeting: action.payload.greeting,
-          posts: action.payload.posts,
-          arts: action.payload.arts,
-          avatar: action.payload.avatar,
-        },
-      };
     case 'USER_LOADED':
       return {
         ...state,
         isLogin: true,
         isLoading: false,
-        user: {
-          id: action.payload.id,
-          email: action.payload.email,
-          name: action.payload.fullname,
-          greeting: action.payload.greeting,
-          posts: action.payload.posts,
-          arts: action.payload.arts,
-          avatar: action.payload.avatar,
-        },
+        user: localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: action.payload.id,
+            email: action.payload.email,
+            name: action.payload.fullname,
+            avatar: action.payload.avatar,
+          })
+        ),
+      };
+
+    case 'EDIT_USER':
+      return {
+        ...state,
+        user: localStorage.setItem(
+          'user',
+          JSON.stringify({
+            id: action.payload.id,
+            email: action.payload.email,
+            name: action.payload.fullname,
+            avatar: action.payload.avatar,
+            greeting: action.payload.greeting,
+          })
+        ),
+      };
+    case 'FOLLOW':
+      return {
+        ...state,
+        follow: action.payload.follow,
+      };
+    case 'LOAD_FOLLOW':
+      return {
+        ...state,
+        follow: action.payload.follow,
+      };
+    case 'UNFOLLOW':
+      return {
+        ...state,
+        follow: action.payload.follow,
       };
 
     case 'DROPDOWN_ORDERS':
@@ -75,11 +92,12 @@ const reducer = (state, action) => {
       };
     case 'AUTH_ERROR':
     case 'LOGOUT':
-      localStorage.removeItem('token');
       return {
         ...state,
         isLogin: false,
         isLoading: false,
+        user: localStorage.removeItem('user'),
+        token: localStorage.removeItem('token'),
       };
     default:
       throw console.log(new Error());

@@ -8,10 +8,10 @@ import Landing from './components/molecules/landing/index';
 import UploadPage from './pages/uploadPost/index';
 import HirePage from './pages/hire/index';
 import EditProfile from './pages/editProfile';
-import Home from './pages/home/index';
+import HomePage from './pages/home/index';
 import PrivateRoute from './components/routes/privateRoute/index';
 import { AppContext } from './context/AppContext';
-import Profile from './pages/profile/index';
+import ProfilePage from './pages/profile/index';
 import DetailPostPage from './pages/detailPost/index';
 import DetailUserPage from './pages/detailUser/index';
 import Test from './pages/test';
@@ -38,7 +38,6 @@ function App() {
           type: 'AUTH_ERROR',
         });
       }
-
       dispatch({
         type: 'USER_LOADED',
         payload: response.data.data.user,
@@ -62,10 +61,13 @@ function App() {
         <PrivateRoute path='/upload' component={UploadPage} />
         <PrivateRoute path='/hire/:id' component={HirePage} />
         <PrivateRoute path='/edit-profile' component={EditProfile} />
-        <PrivateRoute path='/profile' component={Profile} />
+        <PrivateRoute path='/profile' component={ProfilePage} />
         <PrivateRoute path='/detail-post/:id' component={DetailPostPage} />
-        <Route path='/detail-user' component={DetailUserPage} />
-        <Route path='/detail-project/:id' component={DetailProjectPage} />
+        <PrivateRoute path='/detail-user/:id' component={DetailUserPage} />
+        <PrivateRoute
+          path='/detail-project/:id'
+          component={DetailProjectPage}
+        />
         <PrivateRoute path='/transaction' component={Transaction} />
         <PrivateRoute
           path='/upload-project/:id'
@@ -74,7 +76,7 @@ function App() {
 
         <Route path='/test' component={Test} />
 
-        <PrivateRoute path='/' component={Home} />
+        <PrivateRoute path='/' component={HomePage} />
       </Switch>
     </Router>
   );

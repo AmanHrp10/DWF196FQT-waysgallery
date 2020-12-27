@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState, useContext } from 'react';
+import { Fragment, useState, useContext } from 'react';
 import { Modal } from 'react-bootstrap';
 import InputForm from '../../atoms/inputForm/index';
 import Button from '../../atoms/button/index';
@@ -8,9 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { AppContext } from '../../../context/AppContext';
 
 export default function ModalRegister({ onHide, show, isRegister }) {
-  const [newUser, setNewUser] = useState();
   const [state, dispatch] = useContext(AppContext);
-  const { user } = state;
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,7 +16,6 @@ export default function ModalRegister({ onHide, show, isRegister }) {
   });
 
   const router = useHistory();
-  const { email, password, fullname } = formData;
 
   const handlePost = async (e) => {
     e.preventDefault();

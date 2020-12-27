@@ -70,6 +70,37 @@ exports.getAllOffers = async (req, res) => {
   }
 };
 
+//? Get Offer By Id
+exports.getOffer = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const offer = await Hire.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!offer) {
+      return res.send({
+        status: 'Request failed',
+        message: 'Offer not found',
+      });
+    }
+
+    res.send({
+      status: 'Request success',
+      message: 'Offer was fetched',
+      data: {
+        offer,
+      },
+    });
+  } catch (err) {
+    return res.send({
+      status: 'Request failed',
+      message: 'Server error',
+    });
+  }
+};
+
 //? get All Orders
 exports.getAllOrders = async (req, res) => {
   const { id } = req.user;
@@ -119,6 +150,37 @@ exports.getAllOrders = async (req, res) => {
     return res.send({
       status: 'Request failed',
       message: err.message,
+    });
+  }
+};
+
+//? Get Order By Id
+exports.getOrder = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await Hire.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!order) {
+      return res.send({
+        status: 'Request failed',
+        message: 'Offer not found',
+      });
+    }
+
+    res.send({
+      status: 'Request success',
+      message: 'Offer was fetched',
+      data: {
+        order,
+      },
+    });
+  } catch (err) {
+    return res.send({
+      status: 'Request failed',
+      message: 'Server error',
     });
   }
 };

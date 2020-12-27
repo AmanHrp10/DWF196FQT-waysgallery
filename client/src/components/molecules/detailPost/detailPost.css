@@ -10,6 +10,17 @@
     overflow: hidden;
 }
 
+.image-post-preview {
+    height: 400px;
+}
+
+.sub-image{
+    width: 150px;
+    margin-top: 10px;
+    
+    
+}
+
 .desc-post{
     margin-left: 10px;
 }

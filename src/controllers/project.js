@@ -2,7 +2,6 @@ const { Project, ProjectImage, Hire } = require('../../models');
 const Joi = require('joi');
 
 exports.getProjectById = async (req, res) => {
-  const { id: userId } = req.user;
   const { id: hireId } = req.params;
   try {
     const project = await Project.findOne({
@@ -15,7 +14,7 @@ exports.getProjectById = async (req, res) => {
       include: {
         model: ProjectImage,
         as: 'images',
-        attributes: ['id', 'image'],
+        // attributes: ['id', 'image'],
       },
     });
 
@@ -27,7 +26,7 @@ exports.getProjectById = async (req, res) => {
     }
 
     res.send({
-      status: 'Request failed',
+      status: 'Request success',
       message: 'Project success fetching',
       data: {
         project,
@@ -145,6 +144,39 @@ exports.addProject = async (req, res) => {
     res.send({
       status: 'Request failed',
       message: err.message,
+    });
+  }
+};
+
+exports.download = async (req, res) => {
+  const { id: hireId } = req.params;
+  try {
+    const project = await Project.findOne({
+      where: {
+        hireId,
+      },
+      attributes: [],
+      include: {
+        model: ProjectImage,
+        as: 'images',
+        attributes: ['id', 'image'],
+      },
+    });
+
+    if (!project) {
+      return res.send({
+        status: 'Request failed',
+        message: "Can't find Project",
+      });
+    }
+
+    res.send({
+      project,
+    });
+  } catch (err) {
+    return res.send({
+      status: 'Request error',
+      message: 'Server error',
     });
   }
 };

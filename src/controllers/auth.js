@@ -26,7 +26,7 @@ exports.register = async (req, res) => {
       },
     });
     if (checkEmail) {
-      return res.status(409).send({
+      return res.send({
         status: 'Request failed',
         message: 'Email already exist',
       });
@@ -57,11 +57,6 @@ exports.register = async (req, res) => {
     const token = jwt.sign(
       {
         id: newUser.id,
-        email: newUser.email,
-        fullname: newUser.fullname,
-        posts: newUser.posts,
-        avatar: newUser.avatar,
-        arts: newUser.arts,
       },
       privateKey
     );
@@ -74,9 +69,8 @@ exports.register = async (req, res) => {
           id: newUser.id,
           email: newUser.email,
           fullname: newUser.fullname,
-          posts: newUser.posts,
-          arts: newUser.arts,
           avatar: newUser.avatar,
+          greeting: newUser.greeting,
           token,
         },
       },
@@ -106,7 +100,7 @@ exports.login = async (req, res) => {
 
     //? Show error
     if (error) {
-      return res.status(400).send({
+      return res.send({
         status: 'Request failed',
         message: error.details.map((err) => err.message),
       });
@@ -138,7 +132,7 @@ exports.login = async (req, res) => {
 
     //?if email not exist
     if (!user) {
-      return res.status(400).send({
+      return res.send({
         status: 'Request failed',
         message: 'Invalid login',
       });
@@ -149,7 +143,7 @@ exports.login = async (req, res) => {
 
     //? if not password
     if (!passEncrypt) {
-      return res.status(401).send({
+      return res.send({
         status: 'Request failed',
         message: 'Invalid login',
       });
@@ -160,18 +154,13 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user.id,
-        email: user.email,
-        avatar: user.avatar,
-        fullname: user.fullname,
-        posts: user.posts,
-        arts: user.arts,
       },
       privateKey
     );
 
     //? Response login
-    res.status(200).send({
-      status: 'Request succes',
+    res.send({
+      status: 'Request success',
       message: 'Successfully login',
       data: {
         user: {
@@ -179,18 +168,16 @@ exports.login = async (req, res) => {
           email: user.email,
           fullname: user.fullname,
           avatar: user.avatar,
-          fullname: user.fullname,
-          posts: user.posts,
-          arts: user.arts,
+          greeting: user.greeting,
           token,
         },
       },
     });
   } catch (err) {
     console.log(err);
-    return res.status(500).send({
+    return res.send({
       status: 'Request failed',
-      message: err.message,
+      message: 'Server error',
     });
   }
 };

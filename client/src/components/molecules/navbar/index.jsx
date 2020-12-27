@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import Brand from '../../../images/brand.png';
@@ -9,9 +9,12 @@ import { BsFolderSymlink } from 'react-icons/bs';
 import { GoBook } from 'react-icons/go';
 import './navbar.css';
 import { AppContext } from '../../../context/AppContext';
+import { API } from '../../../config/api';
 
 export default function Navbar() {
   const [state, dispatch] = useContext(AppContext);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({});
 
   const router = useHistory();
   const handleLogout = () => {
@@ -20,6 +23,23 @@ export default function Navbar() {
     });
     router.push('landing');
   };
+
+  const getUser = async () => {
+    try {
+      setLoading(true);
+      const response = await API('/user');
+      const userFetch = response.data.data.user;
+      setUser({ ...userFetch, user });
+
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const handleUpload = () => {
     router.push('/upload');
@@ -47,9 +67,14 @@ export default function Navbar() {
                 <Dropdown.Toggle>
                   <div className='image-navbar navbar-brand'>
                     <img
-                      src={DefaultProfile}
+                      src={
+                        loading || !user.avatar
+                          ? DefaultProfile
+                          : `http://localhost:8000/uploads/${user.avatar}`
+                      }
                       alt=''
                       width='100%'
+                      height='100%'
                       style={{ borderRadius: '70%' }}
                     />
                   </div>

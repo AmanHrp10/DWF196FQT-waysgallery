@@ -4,7 +4,7 @@ import { API } from '../../../config/api';
 import Button from '../../atoms/button';
 import Moment from 'moment';
 import { FcCancel } from 'react-icons/fc';
-import { AiOutlineCheckCircle } from 'react-icons/ai';
+import { AiOutlineCheckCircle, AiOutlineLine } from 'react-icons/ai';
 import { useHistory } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import ModalPopUp from '../../atoms/modal';
@@ -14,6 +14,7 @@ export default function Offer() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [text, setText] = useState('');
+  const [detail, setDetail] = useState('');
 
   const router = useHistory();
 
@@ -32,32 +33,47 @@ export default function Offer() {
     }
   };
 
-  const acceptProject = async (e, id) => {
+  const approveProject = async (e, hireId) => {
     e.preventDefault();
+    console.log(e.target);
     try {
-      await API.put(`/hire/${id}`);
-      console.log('accept');
+      await API.put(`/hire/${hireId}`);
       setText('accept');
+      setShowModal(false);
     } catch (err) {
       console.log(err);
       setLoading(false);
     }
   };
 
-  const rejectProject = async (e, id) => {
+  const rejectProject = async (e, hireId) => {
     e.preventDefault();
+    console.log(e.target);
     try {
-      await API.delete(`/hire/${id}`);
-      console.log('reject');
+      await API.delete(`/hire/${hireId}`);
       setText('reject');
+      setShowModal(false);
     } catch (err) {
       console.log(err);
       setLoading(false);
     }
   };
+
+  const handlePopUp = async (e) => {
+    try {
+      setShowModal(true);
+
+      const response = await API(`/transaction/offer/${e.target.id}`);
+      setDetail(response.data.data.offer);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     transaction();
   }, [text]);
+
+  console.log(datas);
 
   return loading ? (
     <Skeleton />
@@ -77,87 +93,106 @@ export default function Offer() {
             </tr>
           </thead>
           {datas.length > 0 &&
-            datas.map((data, index) => {
-              return loading ? (
-                <Skeleton />
-              ) : (
-                <>
-                  <ModalPopUp
-                    show={showModal}
-                    onHide={() => setShowModal(false)}
-                    title={data.title}
-                    body={data.description}
-                  />
-                  <tbody
-                    key={index}
-                    style={{
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      width: '100%',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    <tr>
-                      <td>{index + 1}</td>
-                      <td>{data.orderBy.map((user) => user.fullname)}</td>
-                      <td
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setShowModal(true)}
-                      >
-                        {data.title}
-                      </td>
-                      <td>{Moment(data.started).format('LL')}</td>
-                      <td>{Moment(data.finished).format('LL')}</td>
-                      <td
-                        className={
-                          data.status === 'Waiting Accept'
-                            ? 'text-warning'
+            datas
+              .sort((a, b) => b.id - a.id)
+              .map((data, index) => {
+                return loading ? (
+                  <Skeleton />
+                ) : (
+                  <>
+                    <ModalPopUp
+                      show={showModal}
+                      onHide={() => setShowModal(false)}
+                      title={detail.title}
+                      description={detail.description}
+                      price={detail.price}
+                      approve={(e) => approveProject(e, detail.id)}
+                      reject={(e) => rejectProject(e, detail.id)}
+                    />
+                    <tbody
+                      style={{
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        width: '100%',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{data.orderBy.map((user) => user.fullname)}</td>
+                        <td
+                          id={data.id}
+                          style={{ cursor: 'pointer' }}
+                          onClick={handlePopUp}
+                        >
+                          {data.title}
+                        </td>
+                        <td>{Moment(data.started).format('LL')}</td>
+                        <td>{Moment(data.finished).format('LL')}</td>
+                        <td
+                          className={`text-center ${
+                            data.status === 'Waiting Accept'
+                              ? 'text-warning'
+                              : data.status === 'Success'
+                              ? 'text-info'
+                              : data.status === 'Cancel'
+                              ? 'text-danger'
+                              : data.status === 'Complete'
+                              ? 'text-info'
+                              : data.status === 'Confirm'
+                              ? 'text-success'
+                              : null
+                          }`}
+                        >
+                          {data.status === 'Waiting Accept'
+                            ? 'Waiting Accept'
                             : data.status === 'Success'
-                            ? 'text-success'
+                            ? 'Send a Project!'
                             : data.status === 'Cancel'
-                            ? 'text-danger'
+                            ? 'Canceled'
                             : data.status === 'Complete'
-                            ? 'text-success'
-                            : null
-                        }
-                      >
-                        {data.status}
-                      </td>
-                      <td className='text-center'>
-                        {data.status === 'Waiting Accept' ? (
-                          <div className='d-flex justify-content-center'>
+                            ? 'Waiting Confirm'
+                            : data.status === 'Confirm'
+                            ? 'Success'
+                            : null}
+                        </td>
+                        <td className='text-center'>
+                          {data.status === 'Waiting Accept' ? (
+                            <div className='d-flex justify-content-center'>
+                              <Button
+                                title='Cancel'
+                                className='btn-sm text-white'
+                                style={{ background: 'red' }}
+                                onClick={(e) => rejectProject(e, data.id)}
+                              />
+                              <Button
+                                title='Approve'
+                                className='btn-sm text-white ml-3'
+                                style={{ background: '#0ACF83' }}
+                                onClick={(e) => approveProject(e, data.id)}
+                              />
+                            </div>
+                          ) : data.status === 'Success' ? (
                             <Button
-                              title='Cancel'
-                              className='btn-sm text-white'
-                              style={{ background: 'red' }}
-                              onClick={(e) => rejectProject(e, data.id)}
+                              title='Send Project'
+                              className='btn-sm button-post text-white'
+                              onClick={() =>
+                                router.push(`/upload-project/${data.id}`)
+                              }
                             />
-                            <Button
-                              title='Approve'
-                              className='btn-sm text-white ml-3'
-                              style={{ background: '#0ACF83' }}
-                              onClick={(e) => acceptProject(e, data.id)}
-                            />
-                          </div>
-                        ) : data.status === 'Success' ? (
-                          <Button
-                            title='Send Project'
-                            className='btn-sm button-post text-white'
-                            onClick={() =>
-                              router.push(`/upload-project/${data.id}`)
-                            }
-                          />
-                        ) : data.status === 'Cancel' ? (
-                          <FcCancel color='#red' />
-                        ) : data.status === 'Complete' ? (
-                          <AiOutlineCheckCircle color='#0ACF83' />
-                        ) : null}
-                      </td>
-                    </tr>
-                  </tbody>
-                </>
-              );
-            })}
+                          ) : data.status === 'Cancel' ? (
+                            <FcCancel color='#red' />
+                          ) : data.status === 'Confirm' ? (
+                            <AiOutlineCheckCircle color='#0ACF83' />
+                          ) : data.status === 'Complete' ? (
+                            <AiOutlineLine color='#17a2b8' />
+                          ) : null}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </>
+                );
+              })}
         </Table>
       </div>
     </Fragment>

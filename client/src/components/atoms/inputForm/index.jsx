@@ -1,7 +1,6 @@
 import { Fragment } from 'react';
 
 export default function InputForm({
-  type,
   title,
   onChange,
   className,
@@ -9,7 +8,7 @@ export default function InputForm({
   value,
   ref,
   onClick,
-  label,
+  type,
 }) {
   return (
     <Fragment>
