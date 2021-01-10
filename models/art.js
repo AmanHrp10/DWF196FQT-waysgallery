@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       //? Relationship
+
+      Art.belongsTo(models.User, {
+        as: 'user',
+        foreignKey: 'userId',
+      });
     }
   }
   Art.init(
