@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       ///? Relationship
       User.hasMany(models.Post, {
         as: 'posts',
+        foreignKey: 'userId',
       });
 
       User.belongsToMany(models.User, {
