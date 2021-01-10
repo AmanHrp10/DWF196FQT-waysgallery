@@ -100,7 +100,7 @@ exports.register = async (req, res) => {
     // console.log(err);
     res.send({
       status: 'Request failed',
-      message: 'err.message',
+      message: 'Server error',
     });
   }
 };
@@ -198,7 +198,7 @@ exports.login = async (req, res) => {
     console.log(err);
     return res.send({
       status: 'Request failed',
-      message: 'Server error',
+      message: err.message,
     });
   }
 };
