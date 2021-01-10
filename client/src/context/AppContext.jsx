@@ -42,6 +42,7 @@ const reducer = (state, action) => {
             email: action.payload.email,
             name: action.payload.fullname,
             avatar: action.payload.avatar,
+            greeting: action.payload.greeting,
           })
         ),
       };

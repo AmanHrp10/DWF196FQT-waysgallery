@@ -39,7 +39,6 @@ export default function ModalLogin({ onHide, show }) {
         });
         setPopUp(true);
       }
-      console.log(response.data.status);
       // ? Context
       dispatch({
         type: 'LOGIN',
