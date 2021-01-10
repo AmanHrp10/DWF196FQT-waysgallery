@@ -6,8 +6,8 @@ import Moment from 'moment';
 import { FcCancel } from 'react-icons/fc';
 import { AiOutlineCheckCircle, AiOutlineLine } from 'react-icons/ai';
 import { useHistory } from 'react-router-dom';
-import Skeleton from 'react-loading-skeleton';
 import ModalPopUp from '../../atoms/modal';
+import Loading from '../../atoms/loading';
 
 export default function Offer() {
   let [datas, setDatas] = useState([]);
@@ -76,7 +76,7 @@ export default function Offer() {
   console.log(datas);
 
   return loading ? (
-    <Skeleton />
+    <Loading />
   ) : (
     <Fragment>
       <div className='container'>
@@ -97,7 +97,7 @@ export default function Offer() {
               .sort((a, b) => b.id - a.id)
               .map((data, index) => {
                 return loading ? (
-                  <Skeleton />
+                  <Loading />
                 ) : (
                   <>
                     <ModalPopUp

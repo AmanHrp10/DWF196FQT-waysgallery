@@ -8,11 +8,16 @@ import './home.css';
 import Navbar from '../../components/molecules/navbar';
 import Following from '../../components/molecules/following';
 import TodaysPost from '../../components/molecules/todayPost/index';
+import Loading from '../../components/atoms/loading';
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [userFollow, setUserFollow] = useState([]);
+  const [dataFilter, setDataFilter] = useState([]);
+  const [todays, setTodays] = useState([]);
+  const [text, setText] = useState([]);
   const [dropDown, setDropDown] = useState('All');
+  const [loading, setLoading] = useState(true);
   let [search, setSearch] = useState({
     query: '',
   });
@@ -33,7 +38,8 @@ export default function HomePage() {
   //? All Posts
   const fetchPost = async () => {
     try {
-      const response = await API('/posts');
+      setLoading(true);
+      const response = await API(`/posts`);
 
       const dataPost = response.data.data.posts;
 
@@ -44,9 +50,9 @@ export default function HomePage() {
           src:
             dataPost[i].photos.length === 0
               ? null
-              : `http://localhost:8000/uploads/${dataPost[i].photos[0].image}`,
-          width: 5,
-          height: i % 2 == 0 ? 3 : 4,
+              : dataPost[i].photos[0].image,
+          width: i % 2 == 0 ? 4 : 6,
+          height: i % 2 == 1 ? 4 : 3,
           to: `/detail-post/${dataPost[i].id}`,
           id: dataPost[i].id,
         };
@@ -55,6 +61,7 @@ export default function HomePage() {
       photo.sort((a, b) => b.id - a.id);
 
       setPosts(photo);
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
@@ -63,8 +70,8 @@ export default function HomePage() {
   //? Following
   const fetchFollowing = async () => {
     try {
+      setLoading(true);
       const response = await API(`/follow`);
-
       const dataPost = response.data.data.following;
 
       //? init array
@@ -74,9 +81,9 @@ export default function HomePage() {
           src:
             dataPost[i].photos.length === 0
               ? null
-              : `http://localhost:8000/uploads/${dataPost[i].photos[0].image}`,
-          width: 5,
-          height: i % 2 == 0 ? 3 : 4,
+              : dataPost[i].photos[0].image,
+          width: i % 2 == 0 ? 4 : 4,
+          height: i % 2 == 1 ? 4 : 2,
           to: `/detail-post/${dataPost[i].id}`,
           id: dataPost[i].id,
         };
@@ -85,23 +92,53 @@ export default function HomePage() {
       photo.sort((a, b) => b.id - a.id);
 
       setUserFollow(photo);
+      setLoading(false);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleClickPosts = (e) => {
-    const to = e.target.getAttribute('to');
-    router.push(to);
+  //? Todays
+  const fetchTodays = async () => {
+    try {
+      const response = await API('/posts');
+
+      const dataPost = response.data.data.posts;
+
+      const filterData = dataPost.filter(
+        (data) =>
+          Date.now() - new Date(data.createdAt).getTime() < 24 * 60 * 60 * 1000
+      );
+
+      //? init array
+      let photo = [];
+      for (let i = 0; i < filterData.length; i++) {
+        photo[i] = {
+          src:
+            filterData[i].photos.length === 0
+              ? null
+              : filterData[i].photos[0].image,
+          width: 5,
+          height: i % 2 == 0 ? 3 : 4,
+          to: `/detail-post/${filterData[i].id}`,
+          id: filterData[i].id,
+        };
+      }
+
+      photo.sort((a, b) => b.id - a.id);
+
+      setTodays(photo);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleClickFollow = (e) => {
+  const handlePosts = (e) => {
     const to = e.target.getAttribute('to');
     router.push(to);
   };
 
   const handleSearch = async (e) => {
-    const { title } = search;
     let keyword = e.target.value;
 
     const body = JSON.stringify({ title: keyword });
@@ -112,20 +149,47 @@ export default function HomePage() {
     };
     try {
       const response = await API.post('/search', body, config);
-      console.log(response);
+
+      if (response.data.status === 'Request failed') {
+        setDataFilter([]);
+      }
+      const dataPost = response.data.data.posts;
+
+      // //? init array
+      let photo = [];
+      for (let i = 0; i < dataPost.length; i++) {
+        photo[i] = {
+          src:
+            dataPost[i].photos.length === 0
+              ? null
+              : dataPost[i].photos[0].image,
+          width: 4,
+          height: 2,
+          to: `/detail-post/${dataPost[i].id}`,
+          id: dataPost[i].id,
+        };
+      }
+
+      photo.sort((a, b) => b.id - a.id);
+      setDataFilter(photo);
+      setText(dataPost);
     } catch (err) {
       console.log(err);
     }
+
     setSearch((search = keyword));
   };
 
   useEffect(() => {
-    fetchPost();
     fetchFollowing();
+    fetchPost();
+    fetchTodays();
   }, []);
 
-  console.log(search);
-  return (
+  console.log(text);
+  return loading ? (
+    <Loading />
+  ) : (
     <Fragment>
       <Navbar />
       <div className='container' style={{ marginTop: '110px' }}>
@@ -163,21 +227,55 @@ export default function HomePage() {
           </div>
 
           <div className='col-3 text-right'>
-            <InputForm title={`Search`} onChange={(e) => handleSearch(e)} />
+            <InputForm title={`Search`} onChange={handleSearch} />
           </div>
         </div>
         {dropDown === 'All' ? (
-          <div className='row mt-4'>
-            <Home onClick={handleClickPosts} photos={posts} key={posts.id} />
+          <div className='mt-4'>
+            {loading ? (
+              ''
+            ) : search.length == null ? (
+              <Home onClick={handlePosts} photos={posts} key={posts.id} />
+            ) : (
+              <Home
+                onClick={handlePosts}
+                photos={dataFilter}
+                key={dataFilter.id}
+              />
+            )}
           </div>
         ) : dropDown === 'Following' ? (
-          <Following
-            onClick={handleClickFollow}
-            photos={userFollow}
-            key={userFollow.id}
-          />
+          <div className='mt-4'>
+            {search.length == null ? (
+              <Following
+                onClick={handlePosts}
+                photos={userFollow}
+                key={userFollow.id}
+              />
+            ) : (
+              <Following
+                onClick={handlePosts}
+                photos={dataFilter}
+                key={dataFilter.id}
+              />
+            )}
+          </div>
         ) : dropDown === "Today's" ? (
-          <TodaysPost />
+          <div className='mt-4'>
+            {search.length == null ? (
+              <TodaysPost
+                onClick={handlePosts}
+                photos={todays}
+                key={todays.id}
+              />
+            ) : (
+              <TodaysPost
+                onClick={handlePosts}
+                photos={dataFilter}
+                key={dataFilter.id}
+              />
+            )}
+          </div>
         ) : null}
       </div>
     </Fragment>

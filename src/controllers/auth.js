@@ -2,11 +2,26 @@ const { User, Post, Art, Photos } = require('../../models');
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { post } = require('../routes');
+const { cloudinary } = require('../../config/cloudinary');
 
 exports.register = async (req, res) => {
   try {
     const { body } = req;
+
+    //? Default avatar
+    const avatar = await cloudinary.api.resource(
+      '/defaultPhoto/default',
+      { resource_type: 'image' },
+      (error, result) => {
+        if (error) {
+          return res.send({
+            status: 'Request failed',
+            message: `Photo error ${error.message}`,
+          });
+        }
+      }
+    );
+
     const schema = Joi.object({
       email: Joi.string().email().min(10).required(),
       password: Joi.string().min(8).required(),
@@ -14,7 +29,7 @@ exports.register = async (req, res) => {
     });
     const { error } = schema.validate(body, { abortEarly: false });
     if (error) {
-      return res.status(500).send({
+      return res.send({
         status: 'Validation error',
         message: error.details.map((err) => err.message),
       });
@@ -31,6 +46,10 @@ exports.register = async (req, res) => {
         message: 'Email already exist',
       });
     }
+    const fileAvatar = {
+      path: avatar.secure_url,
+      filename: avatar.public_id,
+    };
 
     const { email, password, fullname } = body;
     const passwordHash = await bcrypt.hash(password, 10);
@@ -38,6 +57,8 @@ exports.register = async (req, res) => {
       email,
       password: passwordHash,
       fullname,
+      avatar: JSON.stringify(fileAvatar),
+      greeting: 'Hello everyone',
       include: [
         {
           model: Post,
@@ -61,7 +82,7 @@ exports.register = async (req, res) => {
       privateKey
     );
 
-    res.send({
+    return res.send({
       status: 'Request success',
       message: 'Your account was registered',
       data: {
@@ -76,10 +97,10 @@ exports.register = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).send({
+    // console.log(err);
+    res.send({
       status: 'Request failed',
-      message: err.message,
+      message: 'err.message',
     });
   }
 };

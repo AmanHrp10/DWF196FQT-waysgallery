@@ -67,11 +67,7 @@ export default function Navbar() {
                 <Dropdown.Toggle>
                   <div className='image-navbar navbar-brand'>
                     <img
-                      src={
-                        loading || !user.avatar
-                          ? DefaultProfile
-                          : `http://localhost:8000/uploads/${user.avatar}`
-                      }
+                      src={loading ? null : JSON.parse(user.avatar).path}
                       alt=''
                       width='100%'
                       height='100%'

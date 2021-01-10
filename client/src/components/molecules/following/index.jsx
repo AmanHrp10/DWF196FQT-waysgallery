@@ -17,15 +17,10 @@ export default function Following({ key, photos, onClick }) {
                 color: '#0202025e',
               }}
             >
-              You Haven't Post from Following user{' '}
+              Not Post
             </h1>
           ) : (
-            <Gallery
-              key={key}
-              photos={photos}
-              onClick={onClick}
-              className='gallery-photo'
-            />
+            <Gallery key={key} photos={photos} onClick={onClick} />
           )}
         </div>
       </div>

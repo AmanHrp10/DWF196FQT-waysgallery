@@ -10,7 +10,7 @@ const routes = require('./src/routes');
 //? Default endpoint
 app.use(express.json());
 app.use(cors());
-app.use('/api/v1', routes);
 app.use('/uploads', express.static('uploads'));
+app.use('/api/v1', routes);
 
 app.listen(port, () => console.log(`server running on port ${port}`));

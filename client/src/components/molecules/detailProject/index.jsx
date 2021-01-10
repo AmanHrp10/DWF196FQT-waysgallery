@@ -2,7 +2,9 @@ import { Fragment, useEffect, useState } from 'react';
 import Button from '../../atoms/button';
 import { useParams, useHistory } from 'react-router-dom';
 import { API } from '../../../config/api';
-import fileDownload from 'js-file-download';
+import axios from 'axios';
+import './detailProject.css';
+import Loading from '../../atoms/loading';
 
 export default function DetailProject() {
   const [hire, setHire] = useState('');
@@ -32,7 +34,6 @@ export default function DetailProject() {
       setLoading(false);
     } catch (err) {
       console.log(err);
-      // setLoading(false);
     }
   };
   const rejectProject = async (e) => {
@@ -42,7 +43,6 @@ export default function DetailProject() {
       router.push('/transaction');
     } catch (err) {
       console.log(err);
-      // setLoading(false);
     }
   };
   const fetchProject = async () => {
@@ -56,12 +56,20 @@ export default function DetailProject() {
     }
   };
 
-  const download = async () => {
+  const download = async (e) => {
     try {
-      const response = await API(`/download/${id}`, { responseType: 'blob' });
-      const data = response;
-      console.log(data);
-      // fileDownload(data, 'file.zip');
+      console.log(e.target.src);
+      const response = await axios.get(e.target.src, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      let link = document.createElement('a');
+
+      link.href = url;
+      console.log(link);
+
+      link.setAttribute('download', 'image.png');
+      document.body.appendChild(link);
+      link.click();
     } catch (err) {
       console.log(err);
     }
@@ -78,7 +86,7 @@ export default function DetailProject() {
 
   console.log(hire);
   return loading ? (
-    <h1>Loading</h1>
+    <Loading />
   ) : (
     <Fragment>
       <div
@@ -89,14 +97,13 @@ export default function DetailProject() {
           <div className='col-8'>
             <div className='image-project' style={{ height: '400px' }}>
               <img
-                src={
-                  !project.images
-                    ? null
-                    : `http://localhost:8000/uploads/${project.images[indexImage].image}`
-                }
+                src={project.images[indexImage].image}
                 width='100%'
                 height='100%'
+                className='img-project'
+                style={{ objectFit: 'cover', cursor: 'pointer' }}
                 alt=''
+                onClick={(e) => download(e)}
               />
             </div>
             <div
@@ -109,11 +116,11 @@ export default function DetailProject() {
                     <img
                       key={index}
                       id={index}
-                      src={`http://localhost:8000/uploads/${image.image}`}
+                      src={image.image}
                       alt=''
                       width='100%'
                       onClick={(e) => handleChangeImage(e)}
-                      style={{ paddingRight: '20px' }}
+                      style={{ paddingRight: '20px', objectFit: 'cover' }}
                     />
                   );
                 })}
@@ -137,13 +144,7 @@ export default function DetailProject() {
                       onClick={rejectProject}
                     />
                   </>
-                ) : loading ? null : (
-                  <Button
-                    title='Download'
-                    onClick={download}
-                    className='button-post text-white btn-sm'
-                  />
-                )}
+                ) : null}
               </div>
             </div>
           </div>

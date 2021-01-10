@@ -1,12 +1,16 @@
 const multer = require('multer');
+const { cloudinary } = require('../../config/cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-exports.uploadFile = (file1, file2) => {
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      return cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      return cb(null, Date.now() + '-' + file.originalname);
+exports.uploadCloud = (file1, file2) => {
+  const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: async (req, file) => {
+      return {
+        folder: `${file.fieldname}`,
+        resource_type: 'image',
+        public_id: `${Date.now()}-${file.originalname}`,
+      };
     },
   });
   //? handle channel table upload file
@@ -54,7 +58,7 @@ exports.uploadFile = (file1, file2) => {
       if (err) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).send({
-            message: 'Max file sized 5MB',
+            message: 'Max file sized 15MB',
           });
         }
         return res.status(400).send(err);

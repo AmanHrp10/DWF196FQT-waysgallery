@@ -1,7 +1,7 @@
 import { Route, Redirect } from 'react-router-dom';
 import { useContext } from 'react';
 import { AppContext } from '../../../context/AppContext';
-import Skeleton from 'react-loading-skeleton';
+import Loading from '../../atoms/loading';
 
 export default function PrivateRoute({ component: Component, ...rest }) {
   let [state] = useContext(AppContext);
@@ -11,7 +11,7 @@ export default function PrivateRoute({ component: Component, ...rest }) {
       {...rest}
       render={(props) => {
         return isLoading ? (
-          <Skeleton height={800} />
+          <Loading />
         ) : isLogin ? (
           <Component {...props} />
         ) : (

@@ -4,6 +4,7 @@ import DefaultProfile from '../../../images/defaultProfile.png';
 import './profile.css';
 import { useHistory } from 'react-router-dom';
 import { API } from '../../../config/api';
+import Loading from '../../atoms/loading';
 
 export default function Profile() {
   const [profile, setProfile] = useState('');
@@ -40,7 +41,7 @@ export default function Profile() {
   const router = useHistory();
 
   return loading ? (
-    <h1>Loading...</h1>
+    <Loading />
   ) : (
     <Fragment>
       <div className='container' style={{ marginTop: '110px' }}>
@@ -48,11 +49,7 @@ export default function Profile() {
           <div className='col-6'>
             <div className='image-profile'>
               <img
-                src={
-                  !profile.avatar
-                    ? DefaultProfile
-                    : `http://localhost:8000/uploads/${profile.avatar}`
-                }
+                src={JSON.parse(profile.avatar).path}
                 alt=''
                 width='100%'
                 style={{ backgroundSize: 'cover' }}
@@ -77,14 +74,14 @@ export default function Profile() {
               }
             >
               <img
-                src={`http://localhost:8000/uploads/${imageLates}`}
+                src={imageLates}
                 alt='Lates Post'
                 width='100%'
                 height='100%'
                 style={{
                   padding: '24px',
-                  backgroundSize: 'cover',
                   borderRadius: '10px',
+                  objectFit: 'cover',
                 }}
               />
               <div className='background'></div>
@@ -106,7 +103,7 @@ export default function Profile() {
                   return (
                     <div className='col-3 p-2' style={{ height: '200px' }}>
                       <img
-                        src={`http://localhost:8000/uploads/${art.artImage}`}
+                        src={art.artImage}
                         alt=''
                         width='100%'
                         height='100%'

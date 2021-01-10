@@ -1,0 +1,4 @@
+.img-project:hover{
+    transform: scale(1.006);
+    border-radius: 5px;
+}

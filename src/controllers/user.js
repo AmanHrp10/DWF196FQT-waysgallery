@@ -1,4 +1,4 @@
-const { User, Post, Art, Photos } = require('../../models');
+const { User, Post, Art, Photos, Follow } = require('../../models');
 const Joi = require('joi');
 
 //? Get All User
@@ -166,8 +166,13 @@ exports.updateUser = async (req, res) => {
     const { body, files } = req;
 
     console.log(files);
-    const fileAvatar = files.avatar[0].filename;
-    console.log(fileAvatar);
+    const user = await User.findOne({
+      where: {
+        id,
+      },
+    });
+
+    const fileAvatar = files.avatar ? files.avatar[0] : JSON.parse(user.avatar);
 
     const schema = Joi.object({
       fullname: Joi.string().min(2),
@@ -188,10 +193,15 @@ exports.updateUser = async (req, res) => {
       });
     }
 
+    const avatarUpload = {
+      path: fileAvatar.path,
+      filename: fileAvatar.filename,
+    };
+
     await User.update(
       {
         ...body,
-        avatar: fileAvatar,
+        avatar: JSON.stringify(avatarUpload),
       },
       {
         where: {
@@ -233,40 +243,100 @@ exports.updateUser = async (req, res) => {
 };
 
 //? Delete
+// exports.deleteUser = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const deletedUser = await User.destroy({
+//       where: {
+//         id,
+//       },
+//     });
+
+//     //? Where id not exist
+//     if (!deletedUser) {
+//       return res.send({
+//         status: 'Request failed',
+//         message: `Video with id ${id} not found`,
+//         data: {
+//           video: deletedUser,
+//         },
+//       });
+//     }
+
+//     //? Response after deleted
+//     res.send({
+//       status: 'Request success',
+//       message: 'Video succesfully deleted',
+//       data: {
+//         video: deletedUser,
+//       },
+//     });
+//   } catch (err) {
+//     res.send({
+//       status: 'Request failed',
+//       message: {
+//         error: 'Server error',
+//       },
+//     });
+//   }
+// };
+
 exports.deleteUser = async (req, res) => {
   try {
+    const { id: userId } = req.user;
     const { id } = req.params;
-    const deletedUser = await User.destroy({
+
+    if (userId !== id) {
+      return res.send({
+        status: 'Request failed',
+        message: 'Invalid user',
+      });
+    }
+
+    const userById = await User.findOne({
       where: {
         id,
       },
     });
 
-    //? Where id not exist
-    if (!deletedUser) {
+    if (!userById) {
       return res.send({
         status: 'Request failed',
-        message: `Video with id ${id} not found`,
-        data: {
-          video: deletedUser,
-        },
+        message: 'User not found',
       });
     }
 
-    //? Response after deleted
+    await Follow.destroy({
+      where: {
+        followingId: id,
+      },
+    });
+
+    await Follow.destroy({
+      where: {
+        followerId: id,
+      },
+    });
+
+    await Post.destroy({
+      where: {
+        userId: id,
+      },
+    });
+
+    const deleteUser = await User.destroy({ where: { id } });
+
     res.send({
-      status: 'Request success',
-      message: 'Video succesfully deleted',
+      status: 'Request succes',
+      message: 'Channel was deleted',
       data: {
-        video: deletedUser,
+        channel: deletedUser,
       },
     });
   } catch (err) {
-    res.send({
+    return res.send({
       status: 'Request failed',
-      message: {
-        error: 'Server error',
-      },
+      message: err.message,
     });
   }
 };

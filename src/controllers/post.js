@@ -8,11 +8,20 @@ exports.getAllPost = async (req, res) => {
       attributes: {
         exclude: ['userId', 'UserId', 'updatedAt'],
       },
-      include: {
-        model: Photos,
-        as: 'photos',
-        attributes: ['id', 'image'],
-      },
+      include: [
+        {
+          model: Photos,
+          as: 'photos',
+          attributes: ['id', 'image'],
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: {
+            exclude: ['password', 'createdAt', 'updatedAt'],
+          },
+        },
+      ],
     });
 
     res.send({
@@ -89,6 +98,8 @@ exports.addPost = async (req, res) => {
     const { id } = req.user;
     const { body, files } = req;
 
+    const filePost = files.photos ? files.photos[0].filename : null;
+    const pathPost = files.photos ? files.photos[0].path : null;
     //? Validation
     const schema = Joi.object({
       title: Joi.string().required(),
@@ -104,7 +115,7 @@ exports.addPost = async (req, res) => {
     );
 
     if (error) {
-      return res.send({
+      res.send({
         status: 'Request failed',
         error: {
           message: error.details.map((err) => err.message),
@@ -130,7 +141,7 @@ exports.addPost = async (req, res) => {
           try {
             await Photos.create({
               postId: newPost.id,
-              image: photo.filename,
+              image: photo.path,
             });
           } catch (err) {
             console.log(err);
@@ -183,7 +194,7 @@ exports.updatePost = async (req, res) => {
 
     console.log(detailPost.title);
     if (!detailPost) {
-      return res.status(404).send({
+      return res.send({
         status: 'Request failed',
         message: `Post with id ${id} not found`,
         data: {
@@ -205,7 +216,7 @@ exports.updatePost = async (req, res) => {
     );
 
     if (error) {
-      return res.status(400).send({
+      return res.send({
         status: 'Request failed',
         error: {
           message: error.details.map((err) => err.message),
@@ -257,6 +268,18 @@ exports.updatePost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const photo = Photos.findAll({
+      where: {
+        postId: id,
+      },
+    });
+
+    await Photos.destroy({
+      where: {
+        id: photo.id,
+      },
+    });
     const deletedPost = await Post.destroy({
       where: {
         id,
@@ -300,6 +323,10 @@ exports.searchPost = async (req, res) => {
       where: {
         title: { [Op.like]: `%${title}%` },
       },
+      include: {
+        model: Photos,
+        as: 'photos',
+      },
     });
 
     if (posts.length === 0) {
@@ -331,8 +358,18 @@ exports.getPostToday = async (req, res) => {
   const d = new Date();
 
   // const date = Math.floor(d.setDate(d.getDate()));
-  console.log('Ini', d.getDay());
+  // console.log('Ini');
+
+  console.log(d.getTime());
+
   try {
+    const todayPost = await Post.findAll();
+
+    console.log(todayPost[0].createdAt.getDay());
+
+    res.send({
+      post: todayPost,
+    });
   } catch (err) {
     console.log(err);
   }

@@ -4,6 +4,7 @@ const router = express.Router();
 //? Require middleware
 const { auth: Private } = require('../middleware/authentication');
 const { uploadFile } = require('../middleware/upload');
+const { uploadCloud } = require('../middleware/uploadCloudinary');
 
 //* Require Controller
 //? Auth
@@ -83,7 +84,7 @@ router.get('/check-auth', Private, checkAuth);
 router.get('/users', getAllUsers);
 router.get('/user', Private, getMyProfile);
 router.get('/user/:id', getUserById);
-router.patch('/user', Private, uploadFile('avatar', null), updateUser);
+router.patch('/user', Private, uploadCloud('avatar', null), updateUser);
 router.delete('/user/:id', deleteUser);
 
 //? Follow
@@ -93,12 +94,12 @@ router.post('/follow/:id', Private, addFollow);
 router.delete('/follow/:id', Private, deleteFollow);
 
 //? Post
-router.get('/posts', Private, getAllPost);
+router.get('/posts', getAllPost);
 router.post('/search', searchPost);
 router.get('/today', getPostToday);
 router.get('/post/:id', Private, getPostById);
-router.post('/post', Private, uploadFile('photos', null), addPost);
-router.patch('/post/:id', Private, uploadFile('photos', null), updatePost);
+router.post('/post', Private, uploadCloud('photos', null), addPost);
+router.patch('/post/:id', Private, uploadCloud('photos', null), updatePost);
 router.delete('/post/:id', Private, deletePost);
 
 //? Photo
@@ -106,7 +107,7 @@ router.delete('/post/:id', Private, deletePost);
 router.get('/photos', getAllPhoto);
 
 //? Art
-router.post('/art', Private, uploadFile('arts', null), addArt);
+router.post('/art', Private, uploadCloud('arts', null), addArt);
 
 //? Hire
 router.get('/hire/:id', Private, getHireById);
@@ -121,7 +122,7 @@ router.get('/transaction/offer/:id', Private, getOffer);
 router.get('/transaction/order/:id', Private, getOrder);
 
 //? Add Project
-router.post('/project/:id', Private, uploadFile('images', null), addProject);
+router.post('/project/:id', Private, uploadCloud('images', null), addProject);
 router.get('/project/:id', Private, getProjectById);
 router.get('/download/:id', Private, download);
 

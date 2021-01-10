@@ -46,7 +46,8 @@ exports.addProject = async (req, res) => {
     const { id: hireId } = req.params;
     const { body, files } = req;
 
-    console.log(files.images[0].filename);
+    const fileProject = files.images ? files.image[0].filename : null;
+    const pathProject = files.images ? files.image[0].path : null;
 
     //? Validation
     const schema = Joi.object({
@@ -89,7 +90,7 @@ exports.addProject = async (req, res) => {
           try {
             await ProjectImage.create({
               projectId: project.id,
-              image: image.filename,
+              image: pathProject,
             });
           } catch (err) {
             console.log(err);
@@ -171,7 +172,7 @@ exports.download = async (req, res) => {
     }
 
     res.send({
-      project,
+      project: project.images[0].image,
     });
   } catch (err) {
     return res.send({

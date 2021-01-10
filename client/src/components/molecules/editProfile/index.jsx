@@ -148,7 +148,7 @@ export default function EditProfile() {
                         <Preview file={previews[0]} isMainPreview />
                       ) : (
                         <InputFile
-                          // onChange={(e) => handleFile(e)}
+                          onChange={(e) => handleForm(e)}
                           name='image'
                           width='520px'
                           height='300px'

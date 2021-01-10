@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import Button from '../../atoms/button';
 import { useHistory, useParams } from 'react-router-dom';
 import { API } from '../../../config/api';
-import Skeleton from 'react-loading-skeleton';
+import Loading from '../../atoms/loading';
 
 export default function DetailUser() {
   const [user, setUser] = useState('');
@@ -67,18 +67,14 @@ export default function DetailUser() {
 
   console.log(isFollow);
   return loading ? (
-    <Skeleton />
+    <Loading />
   ) : (
     <Fragment>
       <div className='container' style={{ marginTop: '110px' }}>
         <div className='row'>
           <div className='col-6'>
             <div className='image-profile'>
-              <img
-                src={user && `http://localhost:8000/uploads/${user.avatar}`}
-                alt=''
-                width='100%'
-              />
+              <img src={user && user.avatar} alt='' width='100%' />
             </div>
             <h5>{user.fullname}</h5>
             <h2>{user.greeting}</h2>
@@ -116,13 +112,11 @@ export default function DetailUser() {
               onClick={() => router.push(`/detail-post/${postLates[0].id}`)}
             >
               <img
-                src={
-                  imageLates && `http://localhost:8000/uploads/${imageLates}`
-                }
+                src={imageLates && imageLates}
                 alt=''
                 width='100%'
                 height='100%'
-                style={{ padding: '24px' }}
+                style={{ padding: '24px', objectFit: 'fill' }}
               />
               <div className='background'></div>
             </div>
@@ -142,11 +136,11 @@ export default function DetailUser() {
                 .map((image, index) => (
                   <div className='col-3 mb-3' key={index}>
                     <img
-                      src={`http://localhost:8000/uploads/${image.artImage}`}
+                      src={image.artImage}
                       alt=''
                       width='100%'
                       height='100%'
-                      style={{ borderRadius: '4px' }}
+                      style={{ borderRadius: '4px', objectFit: 'fill' }}
                     />
                   </div>
                 ))
