@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      //? Relationship
+      ///? Relationship
       User.hasMany(models.Post, {
         as: 'posts',
       });
@@ -43,9 +43,9 @@ module.exports = (sequelize, DataTypes) => {
   User.init(
     {
       email: DataTypes.STRING,
+      password: DataTypes.STRING,
       fullname: DataTypes.STRING,
       avatar: DataTypes.STRING,
-      password: DataTypes.STRING,
       greeting: DataTypes.STRING,
     },
     {

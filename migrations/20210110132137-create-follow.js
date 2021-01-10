@@ -9,8 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       followingId: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Users',
           key: 'id',
@@ -19,8 +19,8 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       followerId: {
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Users',
           key: 'id',
