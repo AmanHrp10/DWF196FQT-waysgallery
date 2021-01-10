@@ -6,14 +6,16 @@ exports.addArt = async (req, res) => {
     const { id: userId } = req.user;
     const { files } = req;
 
-    const pathArt = files.artImage ? files.artImage[0].path : null;
+    console.log(files);
+
+    // const pathArt = files.artImage ? files.artImage[0].path : null;
 
     let images = [];
 
     files.arts.map((file) => {
       images.push({
         userId,
-        artImage: pathArt,
+        artImage: file.path,
       });
     });
 
