@@ -71,7 +71,7 @@ export default function Navbar() {
                       alt=''
                       width='100%'
                       height='100%'
-                      style={{ borderRadius: '100%', objectFit: 'contain' }}
+                      style={{ borderRadius: '100%', objectFit: 'cover' }}
                     />
                   </div>
                 </Dropdown.Toggle>
