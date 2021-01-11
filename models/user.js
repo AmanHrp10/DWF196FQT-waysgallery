@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
         as: 'posts',
         foreignKey: 'userId',
       });
+      User.hasMany(models.Project, {
+        as: 'projects',
+        foreignKey: 'userId',
+      });
 
       User.belongsToMany(models.User, {
         as: 'following',
