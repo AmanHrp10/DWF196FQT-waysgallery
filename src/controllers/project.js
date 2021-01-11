@@ -46,8 +46,7 @@ exports.addProject = async (req, res) => {
     const { id: hireId } = req.params;
     const { body, files } = req;
 
-    const fileProject = files.images ? files.image[0].filename : null;
-    const pathProject = files.images ? files.image[0].path : null;
+    console.log(files);
 
     //? Validation
     const schema = Joi.object({
@@ -87,6 +86,7 @@ exports.addProject = async (req, res) => {
     const photo = async () => {
       return Promise.all(
         files.images.map(async (image) => {
+          console.log(image);
           try {
             await ProjectImage.create({
               projectId: project.id,
