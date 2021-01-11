@@ -20,14 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       });
       Project.belongsTo(models.User, {
         as: 'user',
-        foreignKey: 'UserId',
+        foreignKey: 'userId',
       });
     }
   }
   Project.init(
     {
       hireId: DataTypes.INTEGER,
-      UserId: DataTypes.INTEGER,
+      userId: DataTypes.INTEGER,
       description: DataTypes.TEXT,
     },
     {
