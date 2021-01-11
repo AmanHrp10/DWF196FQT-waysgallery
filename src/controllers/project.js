@@ -90,7 +90,7 @@ exports.addProject = async (req, res) => {
           try {
             await ProjectImage.create({
               projectId: project.id,
-              image: pathProject,
+              image: image.path,
             });
           } catch (err) {
             console.log(err);

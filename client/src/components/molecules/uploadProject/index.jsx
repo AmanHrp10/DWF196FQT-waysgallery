@@ -55,7 +55,7 @@ export default function UploadProject() {
 
       console.log(response);
       if (response.data.status === 'Request failed') {
-        response.data.error.message.map((err) => alert(err));
+        alert(response.data.message);
       }
       setFormData({
         title: '',
