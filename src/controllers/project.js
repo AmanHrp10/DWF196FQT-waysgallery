@@ -72,8 +72,8 @@ exports.addProject = async (req, res) => {
 
     const project = await Project.create({
       ...body,
-      userId,
       hireId,
+      UserId: userId,
     });
 
     if (!project) {
