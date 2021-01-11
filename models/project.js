@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       Project.belongsTo(models.User, {
         as: 'user',
-        foreignKey: 'userId',
+        foreignKey: 'UserId',
       });
     }
   }
